@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace WereWolf
 {
-    public static class PlayerAbstractFactory
+    public class Agent
     {
-
-        public static Player CreatePlayer(string name)
+        public Agent()
         {
-            return new Werewolf();
+
         }
     }
 }

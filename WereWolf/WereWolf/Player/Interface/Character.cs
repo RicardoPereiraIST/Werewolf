@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WereWolf
 {
-    public interface Player
+    public interface Character
     {
         bool isNightPlayer();
         bool isDead();

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace WereWolf
 {
-    public class Werewolf : Character
+    public class Seer : Character
     {
         private bool dead;
 
-        public Werewolf()
+        public Seer()
         {
             dead = false;
         }
@@ -22,12 +22,12 @@ namespace WereWolf
 
         public bool canKill()
         {
-            return true;
+            return false;
         }
 
         public bool canQuestion()
         {
-            return false;
+            return true;
         }
 
         public bool isDead()

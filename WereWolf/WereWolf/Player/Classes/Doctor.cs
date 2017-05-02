@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace WereWolf
 {
-    public class Werewolf : Character
+    public class Doctor : Character
     {
         private bool dead;
 
-        public Werewolf()
+        public Doctor()
         {
             dead = false;
         }
 
         public bool canHeal()
         {
-            return false;
+            return true;
         }
 
         public bool canKill()
         {
-            return true;
+            return false;
         }
 
         public bool canQuestion()
@@ -37,7 +37,7 @@ namespace WereWolf
 
         public bool isNightPlayer()
         {
-            return true;
+            return false;
         }
 
         public void kill()
