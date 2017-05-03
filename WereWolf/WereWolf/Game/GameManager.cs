@@ -98,13 +98,19 @@ namespace WereWolf
 
         private string dayTimeLogic()
         {
+            string result = "No player was accused this round";
+
             //Accuse Player Logic
             string accusedPlayerName = roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
             Player accusedPlayer = players.FirstOrDefault(p=>p.getPlayerName().Equals(accusedPlayerName));
 
-            accusedPlayer.killPlayer();
+            if (accusedPlayer != null)
+            {
+                result = string.Format("Player {0} was accused and is now dead", accusedPlayerName);
+                accusedPlayer.killPlayer();
+            }
 
-            return string.Format("Player {0} was accused and is now dead", accusedPlayerName);
+            return result;
         }
 
         private string runInstructions(string instructions)
