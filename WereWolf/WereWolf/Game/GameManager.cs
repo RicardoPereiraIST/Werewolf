@@ -20,6 +20,16 @@ namespace WereWolf
         private int round;
         private bool nightTime;
 
+        private GameStates gameState;
+        enum GameStates
+        {
+            TALK = 0,
+            ACCUSE = 1,
+            KILL = 2,
+            HEAL = 3,
+            QUESTION = 4
+        }
+
         public GameManager()
         {
             players = new List<Player>();
@@ -27,6 +37,8 @@ namespace WereWolf
             round = 0;
             nightTime = false;
             roundVotes = new Dictionary<string, int>();
+
+            gameState = GameStates.TALK;
         }
 
         public string StartGame(int numPlayers)
