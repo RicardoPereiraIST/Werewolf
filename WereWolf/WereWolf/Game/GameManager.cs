@@ -76,11 +76,12 @@ namespace WereWolf
                 string instructions = player.playRound(nightTime);
                 roundSummary.Append("Player : ");
                 roundSummary.AppendLine(player.getPlayerName());
-                roundSummary.AppendLine(runInstructions(instructions));
+                roundSummary.AppendLine(runInstructions(instructions, player));
             }
             if(nightTime)
             {
                 //NightTime logic
+                roundSummary.AppendLine(nightTimeLogic());
             }
             else
             {
@@ -113,7 +114,25 @@ namespace WereWolf
             return result;
         }
 
-        private string runInstructions(string instructions)
+        private string nightTimeLogic()
+        {
+            string result = "No player was killed this round";
+
+            //Kill Player Logic
+            string killedPlayerName = roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
+            Player killedPlayer = players.FirstOrDefault(p => p.getPlayerName().Equals(killedPlayerName));
+
+            //This should never happen, just for testing sake
+            if (killedPlayer != null)
+            {
+                result = string.Format("Player {0} was killed and is now dead", killedPlayer);
+                killedPlayer.killPlayer();
+            }
+
+            return result;
+        }
+
+        private string runInstructions(string instructions, Player player)
         {
             String[] instructionList = instructions.Split(' ');
             string instruction = instructionList[0];
@@ -124,8 +143,10 @@ namespace WereWolf
                     case "heal":
                         return string.Format("heals {0}\n", instructionList[1]);
                     case "question":
+                        QuestionPlayer(instructionList[1], player);
                         return string.Format("questions {0}\n", instructionList[1]);
                     case "kill":
+                        VotePlayer(instructionList[1]);
                         return string.Format("kills {0}\n", instructionList[1]);
                     default:
                         return "passes\n";
@@ -138,7 +159,7 @@ namespace WereWolf
                     case "talk":
                         return string.Format("says {0}\n", string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
                     case "accuse":
-                        AccusePlayer(instructionList[1]);
+                        VotePlayer(instructionList[1]);
                         return string.Format("accuses {0}\n", instructionList[1]);
                     default:
                         return "passes\n";
@@ -146,7 +167,7 @@ namespace WereWolf
             }
         }
 
-        private void AccusePlayer(string playerName)
+        private void VotePlayer(string playerName)
         {
             int playerVotes = 1;
             if (roundVotes.ContainsKey(playerName))
@@ -159,6 +180,12 @@ namespace WereWolf
             {
                 roundVotes.Add(playerName, playerVotes);
             }
+        }
+
+        private void QuestionPlayer(string playerName, Player player)
+        {
+            Player playerQuestioned = players.FirstOrDefault(p => p.getPlayerName().Equals(playerName));
+            player.seerAnswer(playerName, playerQuestioned.getCharName());
         }
     }
 }

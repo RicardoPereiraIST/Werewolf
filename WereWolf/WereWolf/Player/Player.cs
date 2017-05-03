@@ -11,13 +11,15 @@ namespace WereWolf
         private Character character;
         private Agent agent;
         private string playerName;
-        private bool isHuman; 
+        private bool isHuman;
+        private string characterName;
 
         public Player(string name, bool isHuman, string playerName)
         {
             character = CharacterAbstractFactory.CreatePlayer(name);
             this.isHuman = isHuman;
             this.playerName = playerName;
+            characterName = name;
         }
 
         public string getPlayerName()
@@ -34,6 +36,23 @@ namespace WereWolf
             return character.isDead();
         }
 
+        public string getCharName()
+        {
+            return characterName;
+        }
+
+        public void seerAnswer(string playerName, string character)
+        {
+            if (isHuman)
+            {
+                Console.WriteLine(character);
+                Console.ReadLine();
+            }
+            else
+            {
+                //Agent logic for question
+            }
+        }
 
         public string playRound(bool nightTime)
         {
