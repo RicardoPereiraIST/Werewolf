@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace WereWolf
 {
@@ -11,6 +14,8 @@ namespace WereWolf
         public const int VILLAGER_NUMBER = 2;
 
         private List<Player> players;
+        private Dictionary<string, int> roundVotes;
+
         private bool isOver;
         private int round;
         private bool nightTime;
@@ -21,6 +26,7 @@ namespace WereWolf
             isOver = false;
             round = 0;
             nightTime = false;
+            roundVotes = new Dictionary<string, int>();
         }
 
         public string StartGame(int numPlayers)
@@ -29,7 +35,7 @@ namespace WereWolf
             {
                 for (int i = 0; i < WEREWOLF_NUMBER; i++)
                 {
-                    players.Add(new Player("Werewolf", true, "W"+i));
+                    players.Add(new Player("Werewolf", false, "W"+i));
                 }
 
                 for (int i = 0; i < SEER_NUMBER; i++)
@@ -39,19 +45,19 @@ namespace WereWolf
 
                 for (int i = 0; i < DOCTOR_NUMBER; i++)
                 {
-                    players.Add(new Player("Doctor", true, "D" +i));
+                    players.Add(new Player("Doctor", false, "D" +i));
                 }
 
                 for (int i = 0; i < VILLAGER_NUMBER; i++)
                 {
-                    players.Add(new Player("Villager", true, "V"+i ));
+                    players.Add(new Player("Villager", false, "V"+i ));
                 }
             }
             catch(Exception ex)
             {
                 throw new Exception("Error on starting game (StartGame function): " + ex.Message);
             }
-            return "Game Setup Sucessfull";
+            return "Game Setup Sucessfull\n";
         }
 
         public bool isGameOver()
@@ -61,18 +67,92 @@ namespace WereWolf
 
         public string playRound()
         {
-            foreach(Player player in players)
+            StringBuilder roundSummary = new StringBuilder();
+            roundVotes.Clear();
+
+            foreach (Player player in players)
             {
+                if (player.isPlayerDead()) continue;
                 string instructions = player.playRound(nightTime);
-                runInstructions(instructions);
+                roundSummary.Append("Player : ");
+                roundSummary.AppendLine(player.getPlayerName());
+                roundSummary.AppendLine(runInstructions(instructions));
+            }
+            if(nightTime)
+            {
+                //NightTime logic
+            }
+            else
+            {
+                //DayTime logic
+                roundSummary.AppendLine(dayTimeLogic());
             }
 
-            return string.Format("Round {0} at {1} finished.", round, nightTime ? "NightTime":"DayTime");            
+            roundSummary.AppendLine(string.Format("\nRound {0} at {1} finished.", round, nightTime ? "NightTime":"DayTime"));
+
+            round = nightTime ? round + 1 : round;
+            nightTime = !nightTime;
+
+            return roundSummary.ToString();            
         }
 
-        private void runInstructions(string instructions)
+        private string dayTimeLogic()
         {
-            return;
+            //Accuse Player Logic
+            string accusedPlayerName = roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
+            Player accusedPlayer = players.FirstOrDefault(p=>p.getPlayerName().Equals(accusedPlayerName));
+
+            accusedPlayer.killPlayer();
+
+            return string.Format("Player {0} was accused and is now dead", accusedPlayerName);
+        }
+
+        private string runInstructions(string instructions)
+        {
+            String[] instructionList = instructions.Split(' ');
+            string instruction = instructionList[0];
+            if (nightTime)
+            {
+                switch(instruction)
+                {
+                    case "heal":
+                        return string.Format("heals {0}\n", instructionList[1]);
+                    case "question":
+                        return string.Format("questions {0}\n", instructionList[1]);
+                    case "kill":
+                        return string.Format("kills {0}\n", instructionList[1]);
+                    default:
+                        return "passes\n";
+                }
+            }
+            else
+            {
+                switch (instruction)
+                {
+                    case "talk":
+                        return string.Format("says {0}\n", string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
+                    case "accuse":
+                        AccusePlayer(instructionList[1]);
+                        return string.Format("accuses {0}\n", instructionList[1]);
+                    default:
+                        return "passes\n";
+                }
+            }
+        }
+
+        private void AccusePlayer(string playerName)
+        {
+            int playerVotes = 1;
+            if (roundVotes.ContainsKey(playerName))
+            {
+                roundVotes.TryGetValue(playerName, out playerVotes);
+                ++playerVotes;
+                roundVotes[playerName] = playerVotes;
+            }
+            else
+            {
+                roundVotes.Add(playerName, playerVotes);
+            }
         }
     }
 }

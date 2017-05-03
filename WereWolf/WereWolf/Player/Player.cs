@@ -20,6 +20,21 @@ namespace WereWolf
             this.playerName = playerName;
         }
 
+        public string getPlayerName()
+        {
+            return playerName;
+        }
+
+        public void killPlayer()
+        {
+            character.kill();
+        }
+        public bool isPlayerDead()
+        {
+            return character.isDead();
+        }
+
+
         public string playRound(bool nightTime)
         {
             StringBuilder instructions = new StringBuilder();
@@ -30,27 +45,31 @@ namespace WereWolf
                 {
                     if (character.canHeal())
                     {
-                        instructions.AppendLine("heal PlayerName");
+                        instructions.AppendLine("- heal PlayerName");
                     }
                     if (character.canKill())
                     {
-                        instructions.AppendLine("kill PlayerName");
+                        instructions.AppendLine("- kill PlayerName");
                     }
                     if (character.canQuestion())
                     {
-                        instructions.AppendLine("question PlayerName");
+                        instructions.AppendLine("- question PlayerName");
                     }
                 }
                 else
                 {
-                    instructions.AppendLine("accuse PlayerName");
-                    instructions.AppendLine("talk phrase");
-                    instructions.AppendLine("pass");
+                    instructions.AppendLine("- accuse PlayerName");
+                    instructions.AppendLine("- talk \"phrase\"");
+                    instructions.AppendLine("- pass");
                 }
                 Console.Write(instructions.ToString());
                 return Console.ReadLine();
             }
-            else return string.Empty;
+            else
+            {
+                //Agent Decisions
+                return "pass";
+            }
         }
     }
 }

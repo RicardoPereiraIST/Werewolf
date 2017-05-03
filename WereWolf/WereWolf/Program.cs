@@ -16,7 +16,10 @@ namespace WereWolf
 
             GameManager gameManager = new GameManager();
             Console.WriteLine(gameManager.StartGame(playerNumber));
-            Console.WriteLine(gameManager.playRound());
+            while (!gameManager.isGameOver())
+            {
+                Console.WriteLine(gameManager.playRound());
+            }
             Console.ReadLine();
         }
     }
