@@ -30,6 +30,11 @@ namespace WereWolf
             return false;
         }
 
+        public void heal()
+        {
+            dead = false;
+        }
+
         public bool isDead()
         {
             return dead;

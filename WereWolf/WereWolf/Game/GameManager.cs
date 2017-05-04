@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
+using WereWolf.General;
 
 namespace WereWolf
 {
@@ -18,24 +18,14 @@ namespace WereWolf
 
         private bool isOver;
         private int round;
-        private bool nightTime;
 
         private GameStates gameState;
-        enum GameStates
-        {
-            TALK = 0,
-            ACCUSE = 1,
-            KILL = 2,
-            HEAL = 3,
-            QUESTION = 4
-        }
 
         public GameManager()
         {
             players = new List<Player>();
             isOver = false;
-            round = 0;
-            nightTime = false;
+            round = 1;
             roundVotes = new Dictionary<string, int>();
 
             gameState = GameStates.TALK;
@@ -80,102 +70,106 @@ namespace WereWolf
         public string playRound()
         {
             StringBuilder roundSummary = new StringBuilder();
-            roundVotes.Clear();
 
             foreach (Player player in players)
             {
                 if (player.isPlayerDead()) continue;
-                string instructions = player.playRound(nightTime);
+                string instructions = player.playRound(gameState);
+
                 roundSummary.Append("Player : ");
                 roundSummary.AppendLine(player.getPlayerName());
                 roundSummary.AppendLine(runInstructions(instructions, player));
             }
-            if(nightTime)
+
+            if(gameState == GameStates.KILL)
             {
-                //NightTime logic
-                roundSummary.AppendLine(nightTimeLogic());
+                roundSummary.AppendLine(killLogic());
             }
-            else
+            
+            if(gameState == GameStates.ACCUSE)
             {
-                //DayTime logic
-                roundSummary.AppendLine(dayTimeLogic());
+                roundSummary.AppendLine(accuseLogic());
+                roundVotes.Clear();
             }
 
-            roundSummary.AppendLine(string.Format("\nRound {0} at {1} finished.", round, nightTime ? "NightTime":"DayTime"));
+            if(gameState == GameStates.HEAL)
+            {
+                roundVotes.Clear();
+            }
 
-            round = nightTime ? round + 1 : round;
-            nightTime = !nightTime;
+            if (gameState == GameStates.QUESTION)
+            {
+                roundSummary.AppendLine(string.Format("\nRound {0} finished.", round));
+            }
+
+            gameState = nextGameState();
+            round = gameState == GameStates.TALK ? round + 1 : round;
 
             return roundSummary.ToString();            
         }
 
-        private string dayTimeLogic()
+        private string accuseLogic()
         {
             string result = "No player was accused this round";
 
             //Accuse Player Logic
-            string accusedPlayerName = roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
-            Player accusedPlayer = players.FirstOrDefault(p=>p.getPlayerName().Equals(accusedPlayerName));
+            Player accusedPlayer = getMostVotedPlayer();
 
             if (accusedPlayer != null)
             {
-                result = string.Format("Player {0} was accused and is now dead", accusedPlayerName);
+                result = string.Format("Player {0} was accused and is now dead", accusedPlayer.getPlayerName());
                 accusedPlayer.killPlayer();
             }
 
             return result;
         }
 
-        private string nightTimeLogic()
+        private string killLogic()
         {
             string result = "No player was killed this round";
 
             //Kill Player Logic
-            string killedPlayerName = roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
-            Player killedPlayer = players.FirstOrDefault(p => p.getPlayerName().Equals(killedPlayerName));
+            Player killedPlayer = getMostVotedPlayer();
 
             //This should never happen, just for testing sake
             if (killedPlayer != null)
             {
-                result = string.Format("Player {0} was killed and is now dead", killedPlayer);
+                result = string.Format("Player {0} was killed and is now dead", killedPlayer.getPlayerName());
                 killedPlayer.killPlayer();
             }
 
             return result;
         }
 
+
         private string runInstructions(string instructions, Player player)
         {
             String[] instructionList = instructions.Split(' ');
             string instruction = instructionList[0];
-            if (nightTime)
+
+            switch (instruction)
             {
-                switch(instruction)
-                {
-                    case "heal":
-                        return string.Format("heals {0}\n", instructionList[1]);
-                    case "question":
-                        QuestionPlayer(instructionList[1], player);
-                        return string.Format("questions {0}\n", instructionList[1]);
-                    case "kill":
-                        VotePlayer(instructionList[1]);
-                        return string.Format("kills {0}\n", instructionList[1]);
-                    default:
-                        return "passes\n";
-                }
-            }
-            else
-            {
-                switch (instruction)
-                {
-                    case "talk":
-                        return string.Format("says {0}\n", string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
-                    case "accuse":
-                        VotePlayer(instructionList[1]);
-                        return string.Format("accuses {0}\n", instructionList[1]);
-                    default:
-                        return "passes\n";
-                }
+                case "heal":
+                    HealPlayer(instructionList[1]);
+                    return string.Format("heals {0}\n", instructionList[1]);
+
+                case "question":
+                    QuestionPlayer(instructionList[1], player);
+                    return string.Format("questions {0}\n", instructionList[1]);
+
+                case "kill":
+                    VotePlayer(instructionList[1]);
+                    return string.Format("kills {0}\n", instructionList[1]);
+
+                case "talk":
+                    return string.Format("says {0}\n", string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
+
+                case "accuse":
+                    VotePlayer(instructionList[1]);
+                    return string.Format("accuses {0}\n", instructionList[1]);
+
+                default:
+                    return "passes\n";
             }
         }
 
@@ -196,8 +190,70 @@ namespace WereWolf
 
         private void QuestionPlayer(string playerName, Player player)
         {
-            Player playerQuestioned = players.FirstOrDefault(p => p.getPlayerName().Equals(playerName));
+            Player playerQuestioned = getPlayerByName(playerName);
             player.seerAnswer(playerName, playerQuestioned.getCharName());
+        }
+
+        private string HealPlayer(string playerName)
+        {
+            string result = "No player was healed this round";
+
+            //Kill Player Logic
+            string killedPlayerName = getMostVotedPlayerName();
+
+            if (playerName.Equals(killedPlayerName))
+            {
+                Player killedPlayer = getPlayerByName(killedPlayerName);
+
+                //This should never happen, just for testing sake
+                if (killedPlayer != null)
+                {
+                    result = string.Format("Player {0} was healed and is now alive", killedPlayer);
+                    killedPlayer.healPlayer();
+                }
+            }
+
+            return result;
+        }
+
+        private string getMostVotedPlayerName()
+        {
+            return roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
+        }
+
+        private Player getMostVotedPlayer()
+        {
+            string votedPlayerName = roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
+            return players.FirstOrDefault(p => p.getPlayerName().Equals(votedPlayerName));
+        }
+
+        private Player getPlayerByName(string playerName)
+        {
+            return players.FirstOrDefault(p => p.getPlayerName().Equals(playerName));
+        }
+
+        private GameStates nextGameState()
+        {
+            switch(gameState)
+            {
+                case GameStates.TALK:
+                    return GameStates.ACCUSE;
+
+                case GameStates.ACCUSE:
+                    return GameStates.KILL;
+
+                case GameStates.KILL:
+                    return GameStates.HEAL;
+
+                case GameStates.HEAL:
+                    return GameStates.QUESTION;
+
+                case GameStates.QUESTION:
+                    return GameStates.TALK;
+
+                default:
+                    return GameStates.TALK;
+            }
         }
     }
 }

@@ -14,5 +14,6 @@ namespace WereWolf
         bool canQuestion();
         bool canKill();
         void kill();
+        void heal();
     }
 }

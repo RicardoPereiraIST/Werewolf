@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using WereWolf.General;
 
 namespace WereWolf
 {
@@ -31,6 +29,12 @@ namespace WereWolf
         {
             character.kill();
         }
+
+        public void healPlayer()
+        {
+            character.heal();
+        }
+
         public bool isPlayerDead()
         {
             return character.isDead();
@@ -54,33 +58,37 @@ namespace WereWolf
             }
         }
 
-        public string playRound(bool nightTime)
+        public string playRound(GameStates gameState)
         {
             StringBuilder instructions = new StringBuilder();
             if (isHuman)
             {
                 instructions.AppendLine(string.Format("Player {0} instructions:",playerName));
-                if (nightTime)
+
+                if (character.canHeal() && gameState == GameStates.HEAL)
                 {
-                    if (character.canHeal())
-                    {
-                        instructions.AppendLine("- heal PlayerName");
-                    }
-                    if (character.canKill())
-                    {
-                        instructions.AppendLine("- kill PlayerName");
-                    }
-                    if (character.canQuestion())
-                    {
-                        instructions.AppendLine("- question PlayerName");
-                    }
+                    instructions.AppendLine("- heal PlayerName");
                 }
-                else
+                else if (character.canKill() && gameState == GameStates.KILL)
+                {
+                    instructions.AppendLine("- kill PlayerName");
+                }
+                else if (character.canQuestion() && gameState == GameStates.QUESTION)
+                {
+                    instructions.AppendLine("- question PlayerName");
+                }
+                else if (gameState == GameStates.TALK)
+                {
+                    instructions.AppendLine("- talk \"phrase\"");
+                }
+                else if (gameState == GameStates.ACCUSE)
                 {
                     instructions.AppendLine("- accuse PlayerName");
-                    instructions.AppendLine("- talk \"phrase\"");
-                    instructions.AppendLine("- pass");
                 }
+                else return "pass";
+
+                instructions.AppendLine("- pass");
+
                 Console.Write(instructions.ToString());
                 return Console.ReadLine();
             }

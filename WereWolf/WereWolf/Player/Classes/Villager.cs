@@ -44,5 +44,9 @@ namespace WereWolf
         {
             dead = true;
         }
+        public void heal()
+        {
+            dead = false;
+        }
     }
 }
