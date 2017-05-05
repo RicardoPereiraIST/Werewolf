@@ -52,6 +52,16 @@ namespace WereWolf
                 {
                     players.Add(new Player("Villager", false, "V"+i ));
                 }
+
+                List<String> names = new List<String>();
+                foreach(Player p in players)
+                {
+                    names.Add(p.getPlayerName());
+                }
+                foreach (Player p in players)
+                {
+                    p.setPlayersList(names);
+                }
             }
             catch(Exception ex)
             {
@@ -123,7 +133,7 @@ namespace WereWolf
             gameState = nextGameState();
             round = gameState == GameStates.TALK ? round + 1 : round;
 
-            broadcastRoundSummary(roundSummary.ToString());            
+            broadcastRoundSummary(roundSummary.ToString());
         }
 
         private string accuseLogic()

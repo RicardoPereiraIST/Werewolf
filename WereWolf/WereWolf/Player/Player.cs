@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
+using System.Collections.Generic;
 using WereWolf.General;
+using System.IO;
 
 namespace WereWolf
 {
@@ -18,6 +20,12 @@ namespace WereWolf
             this.isHuman = isHuman;
             this.playerName = playerName;
             characterName = name;
+            agent = new Agent();
+        }
+
+        public void setPlayersList(List<String> players)
+        {
+            agent.setPlayersList(players);
         }
 
         public string getPlayerName()
@@ -67,7 +75,24 @@ namespace WereWolf
             else
             {
                 //Agent RoundSummary Interpretation
+                StringReader summaryList = new StringReader(roundSummary);
+                string play;
+                while ((play = summaryList.ReadLine()) != null)
+                {
+                    if (play.Contains("----------------------")) continue;
+                    if (play.Contains("passes")) continue;
+                    if (play.Contains("No player")) continue;
+
+                    String[] deadList = play.Split(' ');
+                    if (deadList.Length > 2 && (play.Contains("dead") || play.Contains("killed")))
+                        agent.killPlayer(deadList[1]);
+                }
             }
+        }
+
+        public void printList()
+        {
+            agent.printList();
         }
 
         public string playRound(GameStates gameState)
