@@ -58,6 +58,18 @@ namespace WereWolf
             }
         }
 
+        public void applyRoundSummary(string roundSummary)
+        {
+            if (isHuman)
+            {
+                Console.WriteLine(roundSummary);
+            }
+            else
+            {
+                //Agent RoundSummary Interpretation
+            }
+        }
+
         public string playRound(GameStates gameState)
         {
             StringBuilder instructions = new StringBuilder();
@@ -85,7 +97,7 @@ namespace WereWolf
                 {
                     instructions.AppendLine("- accuse PlayerName");
                 }
-                else return "pass";
+                else return string.Empty;
 
                 instructions.AppendLine("- pass");
 
@@ -95,7 +107,11 @@ namespace WereWolf
             else
             {
                 //Agent Decisions
-                return "pass";
+                if (gameState == GameStates.ACCUSE)
+                {
+                    return "pass";
+                }
+                return string.Empty;
             }
         }
     }

@@ -11,14 +11,14 @@ namespace WereWolf
         static void Main(string[] args)
         {
             Console.WriteLine("WELCOME TO THE WEREWOLF GAME");
-            Console.Write("How many human players will play : ");
-            int playerNumber = int.Parse(Console.ReadLine());
+            Console.Write("Is a human playing? (Y/N) : ");
+            bool isPlayerPlaying = Console.ReadLine().Equals("Y");
 
             GameManager gameManager = new GameManager();
-            Console.WriteLine(gameManager.StartGame(playerNumber));
+            Console.WriteLine(gameManager.StartGame(isPlayerPlaying));
             while (!gameManager.isGameOver())
             {
-                Console.WriteLine(gameManager.playRound());
+                gameManager.playRound();
             }
             Console.ReadLine();
         }

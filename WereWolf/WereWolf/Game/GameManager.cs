@@ -16,7 +16,6 @@ namespace WereWolf
         private List<Player> players;
         private Dictionary<string, int> roundVotes;
 
-        private bool isOver;
         private int round;
 
         private GameStates gameState;
@@ -24,14 +23,13 @@ namespace WereWolf
         public GameManager()
         {
             players = new List<Player>();
-            isOver = false;
             round = 1;
             roundVotes = new Dictionary<string, int>();
 
             gameState = GameStates.TALK;
         }
 
-        public string StartGame(int numPlayers)
+        public string StartGame(bool isPlayerPlaying)
         {
             try
             {
@@ -42,12 +40,12 @@ namespace WereWolf
 
                 for (int i = 0; i < SEER_NUMBER; i++)
                 {
-                    players.Add(new Player("Seer", true, "S" + i));
+                    players.Add(new Player("Seer", false, "S" + i));
                 }
 
                 for (int i = 0; i < DOCTOR_NUMBER; i++)
                 {
-                    players.Add(new Player("Doctor", false, "D" +i));
+                    players.Add(new Player("Doctor", isPlayerPlaying, "D" +i));
                 }
 
                 for (int i = 0; i < VILLAGER_NUMBER; i++)
@@ -64,21 +62,32 @@ namespace WereWolf
 
         public bool isGameOver()
         {
-            return isOver;
+            //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
+            bool allWereWolfsDead = players.All(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead() || !p.getCharName().Equals("Werewolf"));
+            bool allNonWerewolfsDead = players.All(p => !p.getCharName().Equals("Werewolf") && p.isPlayerDead() || p.getCharName().Equals("Werewolf"));
+            return allWereWolfsDead || allNonWerewolfsDead;
         }
 
-        public string playRound()
+        private string gameOverMessage()
+        {
+            //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
+            if (players.All(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead() || !p.getCharName().Equals("Werewolf"))) return "Werewolfes lose";
+            else return "Werewolfes win";
+        }
+
+        public void playRound()
         {
             StringBuilder roundSummary = new StringBuilder();
-
+            roundSummary.AppendLine("----------------------");
             foreach (Player player in players)
             {
                 if (player.isPlayerDead()) continue;
                 string instructions = player.playRound(gameState);
 
-                roundSummary.Append("Player : ");
-                roundSummary.AppendLine(player.getPlayerName());
-                roundSummary.AppendLine(runInstructions(instructions, player));
+                if (!string.IsNullOrEmpty(instructions))
+                {
+                    roundSummary.AppendLine(runInstructions(instructions, player));
+                }
             }
 
             if(gameState == GameStates.KILL)
@@ -92,20 +101,29 @@ namespace WereWolf
                 roundVotes.Clear();
             }
 
-            if(gameState == GameStates.HEAL)
+            if (gameState == GameStates.QUESTION)
             {
+                Player mostVotedPlayer = getMostVotedPlayer();
+                //ONLY for testing purposes this shouldnt happen with intelligent AI
+                if (mostVotedPlayer != null)
+                {
+                    roundSummary.AppendLine(string.Format("Player {0} was the choosen one to be killed.", mostVotedPlayer.getPlayerName()));
+                    if (mostVotedPlayer.isPlayerDead()) roundSummary.AppendLine(string.Format("Player {0} is dead forever.", mostVotedPlayer.getPlayerName()));
+                    if (!mostVotedPlayer.isPlayerDead()) roundSummary.AppendLine(string.Format("Player {0} is still alive because he was healed.", mostVotedPlayer.getPlayerName()));
+                }
+
+                roundSummary.AppendLine(string.Format("\nRound {0} finished.", round));
                 roundVotes.Clear();
             }
 
-            if (gameState == GameStates.QUESTION)
-            {
-                roundSummary.AppendLine(string.Format("\nRound {0} finished.", round));
-            }
+
+            if (isGameOver()) roundSummary.AppendLine(string.Format("\nGame is over {0}", gameOverMessage()));
+            roundSummary.AppendLine("----------------------");
 
             gameState = nextGameState();
             round = gameState == GameStates.TALK ? round + 1 : round;
 
-            return roundSummary.ToString();            
+            broadcastRoundSummary(roundSummary.ToString());            
         }
 
         private string accuseLogic()
@@ -124,6 +142,15 @@ namespace WereWolf
             return result;
         }
 
+        private void broadcastRoundSummary(string roundSummary)
+        {
+            foreach (Player player in players)
+            {
+                if (player.isPlayerDead()) continue;
+                player.applyRoundSummary(roundSummary);
+            }
+        }
+
         private string killLogic()
         {
             string result = "No player was killed this round";
@@ -134,7 +161,7 @@ namespace WereWolf
             //This should never happen, just for testing sake
             if (killedPlayer != null)
             {
-                result = string.Format("Player {0} was killed and is now dead", killedPlayer.getPlayerName());
+                result = string.Format("A player has been chosen to be killed by the werewolfes");
                 killedPlayer.killPlayer();
             }
 
@@ -150,26 +177,25 @@ namespace WereWolf
             switch (instruction)
             {
                 case "heal":
-                    HealPlayer(instructionList[1]);
-                    return string.Format("heals {0}\n", instructionList[1]);
+                    return HealPlayer(instructionList[1]);
 
                 case "question":
                     QuestionPlayer(instructionList[1], player);
-                    return string.Format("questions {0}\n", instructionList[1]);
+                    return string.Format("questions {0}", instructionList[1]);
 
                 case "kill":
                     VotePlayer(instructionList[1]);
-                    return string.Format("kills {0}\n", instructionList[1]);
+                    return string.Empty;
 
                 case "talk":
-                    return string.Format("says {0}\n", string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
+                    return string.Format("Player {0} says {1}", player.getPlayerName(), string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
 
                 case "accuse":
                     VotePlayer(instructionList[1]);
-                    return string.Format("accuses {0}\n", instructionList[1]);
+                    return string.Format("Player {0} accuses {1}", player.getPlayerName(), instructionList[1]);
 
                 default:
-                    return "passes\n";
+                    return string.Format("Player {0} passes", player.getPlayerName());
             }
         }
 
@@ -208,7 +234,7 @@ namespace WereWolf
                 //This should never happen, just for testing sake
                 if (killedPlayer != null)
                 {
-                    result = string.Format("Player {0} was healed and is now alive", killedPlayer);
+                    result = string.Format("A player has been choosed to be healed.");
                     killedPlayer.healPlayer();
                 }
             }
