@@ -10,9 +10,13 @@ namespace WereWolf
     {
         private List<String> players;
 
+        //Dummy agent
+        Random rnd;
+
         public Agent()
         {
             players = new List<String>();
+            rnd = new Random(Guid.NewGuid().GetHashCode());
         }
 
         public void setPlayersList(List<String> p)
@@ -23,6 +27,21 @@ namespace WereWolf
         public void killPlayer(string p)
         {
             players.Remove(p);
+        }
+
+        public string talkRound()
+        {
+            return string.Empty;
+        }
+
+        public string accuseRound()
+        {
+            return string.Format("accuse {0}", players[rnd.Next(players.Count)]);
+        }
+
+        public void accusePlayedRound(string playerName, string accusedPlayerName)
+        {
+            return;
         }
 
         public void printList()

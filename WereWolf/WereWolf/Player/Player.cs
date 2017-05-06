@@ -83,9 +83,18 @@ namespace WereWolf
                     if (play.Contains("passes")) continue;
                     if (play.Contains("No player")) continue;
 
-                    String[] deadList = play.Split(' ');
-                    if (deadList.Length > 2 && (play.Contains("dead") || play.Contains("killed")))
-                        agent.killPlayer(deadList[1]);
+                    String[] playList = play.Split(' ');
+                    if (playList.Length > 2)
+                    {
+                         if(play.Contains("dead") || play.Contains("killed"))
+                           agent.killPlayer(playList[1]);
+
+                        if (play.Contains("accuses"))
+                            agent.accusePlayedRound(playList[1], playList[3]);
+                    }
+
+                    
+
                 }
             }
         }
@@ -132,9 +141,13 @@ namespace WereWolf
             else
             {
                 //Agent Decisions
-                if (gameState == GameStates.ACCUSE)
+                if (gameState == GameStates.TALK)
                 {
-                    return "pass";
+                    return agent.talkRound();
+                }
+                if(gameState == GameStates.ACCUSE)
+                {
+                    return agent.accuseRound();
                 }
                 return string.Empty;
             }
