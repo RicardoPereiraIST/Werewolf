@@ -141,11 +141,23 @@ namespace WereWolf
             else
             {
                 //Agent Decisions
-                if (gameState == GameStates.TALK)
+                if (character.canHeal() && gameState == GameStates.HEAL)
+                {
+                    return agent.healRound();
+                }
+                else if (character.canKill() && gameState == GameStates.KILL)
+                {
+                    return agent.killRound();
+                }
+                else if (character.canQuestion() && gameState == GameStates.QUESTION)
+                {
+                    return agent.questionRound();
+                }
+                else if (gameState == GameStates.TALK)
                 {
                     return agent.talkRound();
                 }
-                if(gameState == GameStates.ACCUSE)
+                else if (gameState == GameStates.ACCUSE)
                 {
                     return agent.accuseRound();
                 }

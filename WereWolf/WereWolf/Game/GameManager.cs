@@ -126,14 +126,13 @@ namespace WereWolf
                 roundVotes.Clear();
             }
 
-
-            if (isGameOver()) roundSummary.AppendLine(string.Format("\nGame is over {0}", gameOverMessage()));
             roundSummary.AppendLine("----------------------");
 
             gameState = nextGameState();
             round = gameState == GameStates.TALK ? round + 1 : round;
 
             broadcastRoundSummary(roundSummary.ToString());
+            if (isGameOver()) Console.WriteLine(string.Format("\nGame is over {0}", gameOverMessage()));
         }
 
         private string accuseLogic()

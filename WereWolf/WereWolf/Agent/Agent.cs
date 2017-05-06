@@ -39,6 +39,21 @@ namespace WereWolf
             return string.Format("accuse {0}", players[rnd.Next(players.Count)]);
         }
 
+        public string killRound()
+        {
+            return string.Format("kill {0}", players[rnd.Next(players.Count)]);
+        }
+
+        public string healRound()
+        {
+            return string.Format("heal {0}", players[rnd.Next(players.Count)]);
+        }
+
+        public string questionRound()
+        {
+            return string.Format("question {0}", players[rnd.Next(players.Count)]);
+        }
+
         public void accusePlayedRound(string playerName, string accusedPlayerName)
         {
             return;
