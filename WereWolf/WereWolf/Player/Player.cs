@@ -9,7 +9,7 @@ namespace WereWolf
     public class Player
     {
         private Character character;
-        private Agent agent;
+        private PIMCAgent agent;
         private string playerName;
         private bool isHuman;
         private string characterName;
@@ -20,7 +20,7 @@ namespace WereWolf
             this.isHuman = isHuman;
             this.playerName = playerName;
             characterName = name;
-            agent = new Agent();
+            agent = new PIMCAgent(playerName);
         }
 
         public void setPlayersList(List<String> players)

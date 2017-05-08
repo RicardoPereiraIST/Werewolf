@@ -43,9 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agent\Agent.cs" />
+    <Compile Include="Agent\PIMCAgent.cs" />
     <Compile Include="Agent\InformationSet.cs" />
     <Compile Include="Game\GameManager.cs" />
+    <Compile Include="Game\RolloutGame.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="Player\Classes\Doctor.cs" />
     <Compile Include="Player\Classes\Villager.cs" />
