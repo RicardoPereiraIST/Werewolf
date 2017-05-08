@@ -8,61 +8,51 @@ namespace WereWolf
 {
     public class Agent
     {
-        private List<String> players;
-
-        //Dummy agent
-        Random rnd;
+        InformationSet infoSet;
 
         public Agent()
         {
-            players = new List<String>();
-            rnd = new Random(Guid.NewGuid().GetHashCode());
+            infoSet = new InformationSet();
         }
 
         public void setPlayersList(List<String> p)
         {
-            players = p;
+            infoSet.setPlayersList(p);
         }
 
-        public void killPlayer(string p)
+        public void killPlayer(string playerName)
         {
-            players.Remove(p);
+            infoSet.addKillPlay(playerName);
         }
 
         public string talkRound()
         {
-            return string.Empty;
+            return string.Format("talk {0}", infoSet.talkSample());
         }
 
         public string accuseRound()
         {
-            return string.Format("accuse {0}", players[rnd.Next(players.Count)]);
+            return string.Format("accuse {0}", infoSet.accuseSample());
         }
 
         public string killRound()
         {
-            return string.Format("kill {0}", players[rnd.Next(players.Count)]);
+            return string.Format("kill {0}", infoSet.killSample());
         }
 
         public string healRound()
         {
-            return string.Format("heal {0}", players[rnd.Next(players.Count)]);
+            return string.Format("heal {0}", infoSet.healSample());
         }
 
         public string questionRound()
         {
-            return string.Format("question {0}", players[rnd.Next(players.Count)]);
+            return string.Format("question {0}", infoSet.questionSample());
         }
 
         public void accusePlayedRound(string playerName, string accusedPlayerName)
         {
-            return;
-        }
-
-        public void printList()
-        {
-            foreach(string s in players)
-                Console.WriteLine(s);
+            infoSet.addAccusePlay(playerName, accusedPlayerName);
         }
     }
 }

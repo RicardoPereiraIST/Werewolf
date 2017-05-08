@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Agent\Agent.cs" />
+    <Compile Include="Agent\InformationSet.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="Player\Classes\Doctor.cs" />

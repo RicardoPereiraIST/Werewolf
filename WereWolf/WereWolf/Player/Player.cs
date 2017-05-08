@@ -99,11 +99,6 @@ namespace WereWolf
             }
         }
 
-        public void printList()
-        {
-            agent.printList();
-        }
-
         public string playRound(GameStates gameState)
         {
             StringBuilder instructions = new StringBuilder();
