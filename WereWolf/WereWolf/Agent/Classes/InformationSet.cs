@@ -49,7 +49,23 @@ namespace WereWolf
             foreach (string player in players)
             {
                 if (player.Equals(playerName)) continue;
-                accuseSample.Add(new Player("Villager", false, player, true));
+                int randomNumber = rnd.Next(4);
+                if (randomNumber == 1)
+                {
+                    accuseSample.Add(new Player("Villager", false, player, true));
+                }
+                if (randomNumber == 2)
+                {
+                    accuseSample.Add(new Player("Seer", false, player, true));
+                }
+                if (randomNumber == 3)
+                {
+                    accuseSample.Add(new Player("Doctor", false, player, true));
+                }
+                if (randomNumber == 0)
+                {
+                    accuseSample.Add(new Player("Werewolf", false, player, true));
+                }
             }
             return accuseSample;
         }
