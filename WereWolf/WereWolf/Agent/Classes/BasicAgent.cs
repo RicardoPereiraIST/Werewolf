@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace WereWolf
 {
-    public class PIMCAgent
+    public class BasicAgent : Agent
     {
         private InformationSet infoSet;
-        private int N;
+        private const int N = 10;
 
-        public PIMCAgent(string playerName)
+        public BasicAgent(string playerName)
         {
             infoSet = new InformationSet(playerName);
         }
@@ -47,21 +47,10 @@ namespace WereWolf
 
         public string accuseRound()
         {
-            Dictionary<String, int> possibleAccuses = infoSet.getPossibleAccuses();
-
-            for (int i = 0; i < N; i++)
-            {
-                List<KeyValuePair<string,string>> talkSample = infoSet.accuseSample();
-                RolloutGame game;
-                int accuseUtility;
-
-                foreach(string possibleAccuse in possibleAccuses.Keys)
-                { 
-
-                }
-            }
-
-            return string.Format("accuse {0}", possibleAccuses.FirstOrDefault(x => x.Value == possibleAccuses.Values.Max()).Key);
+            string accused = infoSet.ruledBasedAccuse();
+            if(!string.IsNullOrEmpty(accused))
+                return string.Format("accuse {0}", accused);
+            return "pass";
         }
 
         public string killRound()
@@ -81,7 +70,7 @@ namespace WereWolf
                 }
             }
 
-            return string.Format("kill {0}", possibleKills.FirstOrDefault(x => x.Value == possibleKills.Values.Max()).Key);
+            return string.Format("kill {0}", infoSet.ruledBasedAccuse());
         }
 
         public string healRound()
@@ -96,7 +85,6 @@ namespace WereWolf
 
                 foreach (string possibleHeal in possibleHeals.Keys)
                 {
-
 
                 }
             }
@@ -116,7 +104,6 @@ namespace WereWolf
 
                 foreach (string possibleQuestion in possibleQuestions.Keys)
                 {
-
 
                 }
             }

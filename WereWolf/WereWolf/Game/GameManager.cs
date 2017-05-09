@@ -26,7 +26,7 @@ namespace WereWolf
             round = 1;
             roundVotes = new Dictionary<string, int>();
 
-            gameState = GameStates.TALK;
+            gameState = GameStates.KILL;
         }
 
         public string StartGame(bool isPlayerPlaying)
@@ -74,7 +74,7 @@ namespace WereWolf
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
             bool allWereWolfsDead = players.All(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead() || !p.getCharName().Equals("Werewolf"));
-            bool allNonWerewolfsDead = players.All(p => !p.getCharName().Equals("Werewolf") && p.isPlayerDead() || p.getCharName().Equals("Werewolf"));
+            bool allNonWerewolfsDead = players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count() >= players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
             return allWereWolfsDead || allNonWerewolfsDead;
         }
 
@@ -132,7 +132,8 @@ namespace WereWolf
             round = gameState == GameStates.TALK ? round + 1 : round;
 
             broadcastRoundSummary(roundSummary.ToString());
-            if (isGameOver()) Console.WriteLine(string.Format("\nGame is over {0}", gameOverMessage()));
+            if (isGameOver())
+                Console.WriteLine(string.Format("\nGame is over {0}", gameOverMessage()));
         }
 
         private string accuseLogic()

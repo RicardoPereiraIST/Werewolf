@@ -9,7 +9,7 @@ namespace WereWolf
     public class Player
     {
         private Character character;
-        private PIMCAgent agent;
+        private Agent agent;
         private string playerName;
         private bool isHuman;
         private string characterName;
@@ -20,7 +20,18 @@ namespace WereWolf
             this.isHuman = isHuman;
             this.playerName = playerName;
             characterName = name;
-            agent = new PIMCAgent(playerName);
+            agent = new PIMCAgent(this);
+        }
+
+        public Player(string name, bool isHuman, string playerName, bool basicAgent)
+        {
+            character = CharacterAbstractFactory.CreatePlayer(name);
+            this.isHuman = isHuman;
+            this.playerName = playerName;
+            characterName = name;
+            if (basicAgent)
+                agent = new BasicAgent(playerName);
+            else agent = new PIMCAgent(this);
         }
 
         public void setPlayersList(List<String> players)

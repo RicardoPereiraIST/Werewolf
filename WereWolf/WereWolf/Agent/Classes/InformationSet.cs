@@ -22,7 +22,7 @@ namespace WereWolf
             players = new List<string>();
             rnd = new Random(Guid.NewGuid().GetHashCode());
 
-            talks = new List<string>(){ "I believe", "I'm sure", "I'm not", "Player is" };
+            talks = new List<string>(){ "The player {0} is a werewolf","I don't know", "The player {0} is not a werewolf"};
             this.playerName = playerName;
         }
 
@@ -38,25 +38,28 @@ namespace WereWolf
 
         public void setPlayersList(List<String> p)
         {
-            players = p;
+            players = new List<String>(p);
         }
 
-        public List<KeyValuePair<string,string>> accuseSample()
+        public List<Player> accuseSample()
         {
-            List<KeyValuePair<string, string>> accuseSample = new List<KeyValuePair<string, string>>(players.Count);
+            List<Player> accuseSample = new List<Player>(players.Count);
 
             //Lets infer first information - Player will not accuse himself
             foreach (string player in players)
             {
-                string playerToBeAccused = string.Empty;
-                do
-                {
-                    playerToBeAccused = players[rnd.Next(players.Count)];
-                } while (playerToBeAccused == player);
-
-                accuseSample.Add(new KeyValuePair<string, string>(player, playerToBeAccused));
+                if (player.Equals(playerName)) continue;
+                accuseSample.Add(new Player("Villager", false, player, true));
             }
             return accuseSample;
+        }
+
+        public string ruledBasedAccuse()
+        {
+            List<String> accuseList = players.Where(p => p != playerName).ToList();
+            if (accuseList.Count > 0)
+                return accuseList[rnd.Next(accuseList.Count)];
+            else return string.Empty;
         }
         public string killSample()
         {
