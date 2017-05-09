@@ -24,6 +24,11 @@ namespace WereWolf
             infoSet.addKillPlay(playerName);
         }
 
+        public void addFriend(string friend)
+        {
+            infoSet.addFriend(friend);
+        }
+
         public string talkRound()
         {
             //Value of the talks, every one has a 0 value in the beginning.

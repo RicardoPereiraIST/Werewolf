@@ -14,6 +14,8 @@ namespace WereWolf
         private List<String> talks;
         private string playerName;
 
+        private List<string> friends;
+
         //Dummy agent
         Random rnd;
 
@@ -21,6 +23,8 @@ namespace WereWolf
         {
             players = new List<string>();
             rnd = new Random(Guid.NewGuid().GetHashCode());
+
+            friends = new List<string>();
 
             talks = new List<string>(){ "The player {0} is a werewolf","I don't know", "The player {0} is not a werewolf"};
             this.playerName = playerName;
@@ -34,6 +38,11 @@ namespace WereWolf
         public void addKillPlay(String playerName)
         {
             players.Remove(playerName);
+        }
+
+        public void addFriend(string friend)
+        {
+            friends.Add(friend);
         }
 
         public void setPlayersList(List<String> p)

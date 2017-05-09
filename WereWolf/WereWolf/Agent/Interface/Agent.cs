@@ -12,6 +12,8 @@ namespace WereWolf
 
         void killPlayer(string playerName);
 
+        void addFriend(string friend);
+
         string talkRound();
 
         string accuseRound();

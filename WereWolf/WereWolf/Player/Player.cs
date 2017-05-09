@@ -44,6 +44,17 @@ namespace WereWolf
             agent.setPlayersList(players);
         }
 
+        public void addFriends(List<String> friends)
+        {
+            foreach (string s in friends)
+            {
+                if (!s.Equals(playerName))
+                {
+                    agent.addFriend(s);
+                }
+            }
+        }
+
         public string getPlayerName()
         {
             return playerName;

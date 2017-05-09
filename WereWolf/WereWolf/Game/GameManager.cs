@@ -54,13 +54,23 @@ namespace WereWolf
                 }
 
                 List<String> names = new List<String>();
+                List<String> werewolves = new List<String>();
+
                 foreach(Player p in players)
                 {
                     names.Add(p.getPlayerName());
+                    if (p.getCharName().Equals("Werewolf"))
+                    {
+                        werewolves.Add(p.getPlayerName());
+                    }
                 }
                 foreach (Player p in players)
                 {
                     p.setPlayersList(names);
+                    if (p.getCharName().Equals("Werewolf"))
+                    {
+                        p.addFriends(werewolves);
+                    }
                 }
             }
             catch(Exception ex)
