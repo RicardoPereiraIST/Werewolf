@@ -54,15 +54,18 @@ namespace WereWolf
             for (int i = 0; i < N; i++)
             {
                 List<Player> accuseSample = new List<Player>();
-                accuseSample.Add(new Player(player.getCharName(), false, player.getPlayerName()));
+                accuseSample.Add(player.Copy());
                 accuseSample.AddRange(infoSet.accuseSample());
 
                 RolloutGame game;
 
-                foreach(string possibleAccuse in infoSet.getPossibleAccuses().Keys)
+                foreach (string possibleAccuse in infoSet.getPossibleAccuses().Keys)
                 {
-                    game = new RolloutGame(accuseSample, General.GameStates.ACCUSE);
-                    possibleAccuses[possibleAccuse] += game.sampleGame(string.Format("accuse {0}", possibleAccuse));
+                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
+
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.ACCUSE);
+                    game.sampleGame(string.Format("accuse {0}", possibleAccuse));
+                    possibleAccuses[possibleAccuse] += game.evalGame(player.getCharName());
                 }
             }
 

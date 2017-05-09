@@ -35,18 +35,13 @@ namespace WereWolf
             }
         }
 
-        public int sampleGame(string command)
+        public void sampleGame(string command)
         {
             playRound(command);
             while (!isGameOver())
             {
                 playRound(string.Empty);
             }
-
-            if (werewolfesWin())
-                return 1;
-            else
-                return -1;
         }
 
         private bool werewolfesWin()
@@ -55,6 +50,17 @@ namespace WereWolf
             return players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count() >= players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
         }
 
+        public int evalGame(string team)
+        {
+            if (werewolfesWin() && team.Equals("Werewolf"))
+                return players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+            else if(!werewolfesWin() && team.Equals("Werewolf"))
+                return -players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+
+            if(!werewolfesWin() && !team.Equals("Werewolf"))
+                return players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+            else return -players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+        }
         public void playRound(string command)
         {
             StringBuilder roundSummary = new StringBuilder();

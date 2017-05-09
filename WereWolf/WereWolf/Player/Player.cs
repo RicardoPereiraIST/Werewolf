@@ -13,6 +13,7 @@ namespace WereWolf
         private string playerName;
         private bool isHuman;
         private string characterName;
+        private bool basicAgent;
 
         public Player(string name, bool isHuman, string playerName)
         {
@@ -21,6 +22,8 @@ namespace WereWolf
             this.playerName = playerName;
             characterName = name;
             agent = new PIMCAgent(this);
+
+            basicAgent = false;
         }
 
         public Player(string name, bool isHuman, string playerName, bool basicAgent)
@@ -32,6 +35,8 @@ namespace WereWolf
             if (basicAgent)
                 agent = new BasicAgent(playerName);
             else agent = new PIMCAgent(this);
+
+            this.basicAgent = basicAgent;
         }
 
         public void setPlayersList(List<String> players)
@@ -103,9 +108,6 @@ namespace WereWolf
                         if (play.Contains("accuses"))
                             agent.accusePlayedRound(playList[1], playList[3]);
                     }
-
-                    
-
                 }
             }
         }
@@ -169,6 +171,11 @@ namespace WereWolf
                 }
                 return string.Empty;
             }
+        }
+
+        public Player Copy()
+        {
+            return new Player(characterName, false, playerName, basicAgent);
         }
     }
 }

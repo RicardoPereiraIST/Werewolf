@@ -11,7 +11,7 @@ namespace WereWolf
         public const int WEREWOLF_NUMBER = 2;
         public const int SEER_NUMBER = 1;
         public const int DOCTOR_NUMBER = 1;
-        public const int VILLAGER_NUMBER = 2;
+        public const int VILLAGER_NUMBER = 3;
 
         private List<Player> players;
         private Dictionary<string, int> roundVotes;
@@ -50,7 +50,7 @@ namespace WereWolf
 
                 for (int i = 0; i < VILLAGER_NUMBER; i++)
                 {
-                    players.Add(new Player("Villager", false, "V"+i ));
+                    players.Add(new Player("Villager", false, "V"+i));
                 }
 
                 List<String> names = new List<String>();
@@ -103,6 +103,7 @@ namespace WereWolf
             if(gameState == GameStates.KILL)
             {
                 roundSummary.AppendLine(killLogic());
+                roundVotes.Clear();
             }
             
             if(gameState == GameStates.ACCUSE)
@@ -156,7 +157,6 @@ namespace WereWolf
         {
             foreach (Player player in players)
             {
-                if (player.isPlayerDead()) continue;
                 player.applyRoundSummary(roundSummary);
             }
         }
