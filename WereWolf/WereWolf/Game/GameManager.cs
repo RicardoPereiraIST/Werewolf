@@ -103,7 +103,6 @@ namespace WereWolf
             if(gameState == GameStates.KILL)
             {
                 roundSummary.AppendLine(killLogic());
-                roundVotes.Clear();
             }
             
             if(gameState == GameStates.ACCUSE)
