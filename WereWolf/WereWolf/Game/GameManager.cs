@@ -11,7 +11,7 @@ namespace WereWolf
         public const int WEREWOLF_NUMBER = 2;
         public const int SEER_NUMBER = 1;
         public const int DOCTOR_NUMBER = 1;
-        public const int VILLAGER_NUMBER = 3;
+        public const int VILLAGER_NUMBER = 5;
 
         private List<Player> players;
         private Dictionary<string, int> roundVotes;
@@ -36,35 +36,38 @@ namespace WereWolf
             healedPlayer = string.Empty;
         }
 
-        public string StartGame(bool isPlayerPlaying)
+        public string StartGame(bool isPlayerPlaying, string playerName)
         {
             try
             {
                 for (int i = 0; i < WEREWOLF_NUMBER; i++)
                 {
-                    players.Add(new Player("Werewolf", false, playerNames[i]));
+                    players.Add(new Player("Werewolf", playerNames[i]));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < SEER_NUMBER; i++)
                 {
-                    players.Add(new Player("Seer", false, playerNames[i]));
+                    players.Add(new Player("Seer", playerNames[i]));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < DOCTOR_NUMBER; i++)
                 {
-                    players.Add(new Player("Doctor", isPlayerPlaying, playerNames[i]));
+                    players.Add(new Player("Doctor", playerNames[i]));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < VILLAGER_NUMBER; i++)
                 {
-                    players.Add(new Player("Villager", false, playerNames[i]));
+                    players.Add(new Player("Villager", playerNames[i]));
                     playerNames.RemoveAt(i);
                 }
 
                 players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
+
+                if(isPlayerPlaying)
+                 players[rand.Next(players.Count)].setPlayerAsHuman(playerName);
 
                 List<String> names = new List<String>();
                 List<String> werewolves = new List<String>();
@@ -120,7 +123,7 @@ namespace WereWolf
 
                 if (!string.IsNullOrEmpty(instructions))
                 {
-                    roundSummary.AppendLine(runInstructions(instructions, player));
+                    roundSummary.Append(runInstructions(instructions, player));
                 }
             }
 
@@ -215,21 +218,21 @@ namespace WereWolf
 
                 case "question":
                     QuestionPlayer(instructionList[1], player);
-                    return string.Format("questions {0}", instructionList[1]);
+                    return string.Empty;
 
                 case "kill":
                     VotePlayer(instructionList[1]);
                     return string.Empty;
 
                 case "talk":
-                    return string.Format("Player {0} says {1}", player.getPlayerName(), string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
+                    return string.Format("Player {0} says {1}\n", player.getPlayerName(), string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
 
                 case "accuse":
                     VotePlayer(instructionList[1]);
-                    return string.Format("Player {0} accuses {1}", player.getPlayerName(), instructionList[1]);
+                    return string.Format("Player {0} accuses {1}\n", player.getPlayerName(), instructionList[1]);
 
                 default:
-                    return string.Format("Player {0} passes", player.getPlayerName());
+                    return string.Format("Player {0} passes\n", player.getPlayerName());
             }
         }
 
@@ -256,7 +259,7 @@ namespace WereWolf
 
         private string HealPlayer(string playerName)
         {
-            string result = "No player was healed this round";
+            string result = "No player was healed this round\n";
 
             //Kill Player Logic
             string killedPlayerName = getMostVotedPlayerName();
@@ -268,7 +271,7 @@ namespace WereWolf
                 //This should never happen, just for testing sake
                 if (killedPlayer != null)
                 {
-                    result = string.Format("A player has been choosed to be healed.");
+                    result = string.Format("A player has been choosed to be healed.\n");
                     healedPlayer = playerName;
                 }
             }

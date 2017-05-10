@@ -14,8 +14,11 @@ namespace WereWolf
             Console.Write("Is a human playing? (Y/N) : ");
             bool isPlayerPlaying = Console.ReadLine().Equals("Y");
 
+            if(isPlayerPlaying) Console.Write("What is your desired name? : ");
+            string playerName = Console.ReadLine();
+
             GameManager gameManager = new GameManager();
-            Console.WriteLine(gameManager.StartGame(isPlayerPlaying));
+            Console.WriteLine(gameManager.StartGame(isPlayerPlaying, playerName));
             do
             {
                 gameManager.playRound();

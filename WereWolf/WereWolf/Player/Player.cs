@@ -15,15 +15,15 @@ namespace WereWolf
         private string characterName;
         private bool basicAgent;
 
-        public Player(string name, bool isHuman, string playerName)
+        public Player(string name, string playerName)
         {
             character = CharacterAbstractFactory.CreatePlayer(name);
-            this.isHuman = isHuman;
             this.playerName = playerName;
             characterName = name;
             agent = new PIMCAgent(this);
 
             basicAgent = false;
+            isHuman = false;
         }
 
         public Player(string name, bool isHuman, string playerName, bool basicAgent)
@@ -37,6 +37,12 @@ namespace WereWolf
             else agent = new PIMCAgent(this);
 
             this.basicAgent = basicAgent;
+        }
+
+        public void setPlayerAsHuman(string playerName)
+        {
+            isHuman = true;
+            this.playerName = playerName;
         }
 
         public void setPlayersList(List<String> players)
