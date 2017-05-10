@@ -111,12 +111,12 @@ namespace WereWolf
 
         public Dictionary<String, int> getPossibleAccuses()
         {
-            return players.Select(x => x).Where(x => x != playerName).ToDictionary(x => x , x => 0);
+            return players.Select(x => x).Where(x => x != playerName && !friends.Contains(x)).ToDictionary(x => x , x => 0);
         }
 
         public Dictionary<String, int> getPossibleKills()
         {
-            return players.Select(x => x).Where(x => x != playerName).ToDictionary(x => x, x => 0);
+            return players.Select(x => x).Where(x => x != playerName && !friends.Contains(x)).ToDictionary(x => x, x => 0);
         }
 
         public Dictionary<String, int> getPossibleQuestions()

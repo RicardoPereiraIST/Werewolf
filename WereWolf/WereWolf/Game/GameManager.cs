@@ -15,18 +15,25 @@ namespace WereWolf
 
         private List<Player> players;
         private Dictionary<string, int> roundVotes;
+        private string healedPlayer;
+        private List<string> playerNames;
 
         private int round;
 
         private GameStates gameState;
+        Random rand;
 
         public GameManager()
         {
             players = new List<Player>();
             round = 1;
             roundVotes = new Dictionary<string, int>();
+            playerNames = new List<String>() { "aaron", "abdul", "abe", "abel", "abraham", "adam", "adan", "adolfo", "adolph", "adrian", "abby", "abigail", "adele", "adrian", "abbott", "acosta", "adams", "adkins", "aguilar" };
 
             gameState = GameStates.KILL;
+            rand = new Random(Guid.NewGuid().GetHashCode());
+            playerNames = playerNames.OrderBy(c => rand.Next()).Select(c => c).ToList();
+            healedPlayer = string.Empty;
         }
 
         public string StartGame(bool isPlayerPlaying)
@@ -35,23 +42,29 @@ namespace WereWolf
             {
                 for (int i = 0; i < WEREWOLF_NUMBER; i++)
                 {
-                    players.Add(new Player("Werewolf", false, "W"+i));
+                    players.Add(new Player("Werewolf", false, playerNames[i]));
+                    playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < SEER_NUMBER; i++)
                 {
-                    players.Add(new Player("Seer", false, "S" + i));
+                    players.Add(new Player("Seer", false, playerNames[i]));
+                    playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < DOCTOR_NUMBER; i++)
                 {
-                    players.Add(new Player("Doctor", isPlayerPlaying, "D" +i));
+                    players.Add(new Player("Doctor", isPlayerPlaying, playerNames[i]));
+                    playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < VILLAGER_NUMBER; i++)
                 {
-                    players.Add(new Player("Villager", false, "V"+i));
+                    players.Add(new Player("Villager", false, playerNames[i]));
+                    playerNames.RemoveAt(i);
                 }
+
+                players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
 
                 List<String> names = new List<String>();
                 List<String> werewolves = new List<String>();
@@ -64,6 +77,7 @@ namespace WereWolf
                         werewolves.Add(p.getPlayerName());
                     }
                 }
+
                 foreach (Player p in players)
                 {
                     p.setPlayersList(names);
@@ -112,7 +126,7 @@ namespace WereWolf
 
             if(gameState == GameStates.KILL)
             {
-                roundSummary.AppendLine(killLogic());
+                roundSummary.AppendLine("A player has been chosen to be killed by the werewolfes");
             }
             
             if(gameState == GameStates.ACCUSE)
@@ -123,14 +137,23 @@ namespace WereWolf
 
             if (gameState == GameStates.QUESTION)
             {
+                killLogic();
                 Player mostVotedPlayer = getMostVotedPlayer();
                 //ONLY for testing purposes this shouldnt happen with intelligent AI
                 if (mostVotedPlayer != null)
                 {
                     roundSummary.AppendLine(string.Format("Player {0} was the choosen one to be killed.", mostVotedPlayer.getPlayerName()));
-                    if (mostVotedPlayer.isPlayerDead()) roundSummary.AppendLine(string.Format("Player {0} is dead forever.", mostVotedPlayer.getPlayerName()));
-                    if (!mostVotedPlayer.isPlayerDead()) roundSummary.AppendLine(string.Format("Player {0} is still alive because he was healed.", mostVotedPlayer.getPlayerName()));
+                    if (healedPlayer != mostVotedPlayer.getPlayerName())
+                    {
+                        roundSummary.AppendLine(string.Format("Player {0} is dead forever.", mostVotedPlayer.getPlayerName()));
+                    }
+                    else
+                    {
+                        roundSummary.AppendLine(string.Format("Player {0} is still alive because he was healed.", mostVotedPlayer.getPlayerName()));
+                        mostVotedPlayer.healPlayer();
+                    }
                 }
+                healedPlayer = string.Empty;
 
                 roundSummary.AppendLine(string.Format("\nRound {0} finished.", round));
                 roundVotes.Clear();
@@ -170,21 +193,13 @@ namespace WereWolf
             }
         }
 
-        private string killLogic()
+        private void killLogic()
         {
-            string result = "No player was killed this round";
-
             //Kill Player Logic
             Player killedPlayer = getMostVotedPlayer();
 
             //This should never happen, just for testing sake
-            if (killedPlayer != null)
-            {
-                result = string.Format("A player has been chosen to be killed by the werewolfes");
-                killedPlayer.killPlayer();
-            }
-
-            return result;
+            killedPlayer.killPlayer();
         }
 
 
@@ -254,10 +269,9 @@ namespace WereWolf
                 if (killedPlayer != null)
                 {
                     result = string.Format("A player has been choosed to be healed.");
-                    killedPlayer.healPlayer();
+                    healedPlayer = playerName;
                 }
             }
-
             return result;
         }
 
