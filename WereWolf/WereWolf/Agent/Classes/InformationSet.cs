@@ -32,7 +32,15 @@ namespace WereWolf
 
         public void addAccusePlay(String playerName, String accusedName)
         {
-
+            //Add accused playing
+            if(accusedPlayers[playerName] != null)
+            {
+                accusedPlayers[playerName].Add(accusedName);
+            }
+            else
+            {
+                accusedPlayers.Add(playerName, new List<string> { accusedName });
+            }
         }
 
         public void addKillPlay(String playerName)
@@ -52,6 +60,8 @@ namespace WereWolf
 
         public List<Player> accuseSample()
         {
+            //TODO
+            //Update beliefs based on accuses
             List<Player> accuseSample = new List<Player>(players.Count);
 
             //Lets infer first information - Player will not accuse himself
