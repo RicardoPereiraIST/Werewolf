@@ -15,7 +15,7 @@ namespace WereWolf
             bool isPlayerPlaying = Console.ReadLine().Equals("Y");
 
             if(isPlayerPlaying) Console.Write("What is your desired name? : ");
-            string playerName = Console.ReadLine();
+            string playerName = isPlayerPlaying ? Console.ReadLine() : string.Empty;
 
             GameManager gameManager = new GameManager();
             Console.WriteLine(gameManager.StartGame(isPlayerPlaying, playerName));
