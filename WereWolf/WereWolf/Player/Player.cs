@@ -96,6 +96,7 @@ namespace WereWolf
             else
             {
                 //Agent logic for question
+                agent.seerQuestion(playerName, character);
             }
         }
 

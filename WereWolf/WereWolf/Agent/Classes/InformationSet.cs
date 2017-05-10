@@ -11,7 +11,7 @@ namespace WereWolf
         private List<String> players;
         private Dictionary<String, List<String>> accusedPlayers;
 
-        private List<String> talks;
+        private Dictionary<String, KeyValuePair<String, int>> roleBeliefs;
         private string playerName;
 
         private List<string> friends;
@@ -23,23 +23,39 @@ namespace WereWolf
         {
             players = new List<string>();
             rnd = new Random(Guid.NewGuid().GetHashCode());
-
             friends = new List<string>();
-
-            talks = new List<string>(){ "The player {0} is a werewolf","I don't know", "The player {0} is not a werewolf"};
+            roleBeliefs = new Dictionary<String, KeyValuePair<String, int>>();
+            accusedPlayers = new Dictionary<String, List<String>>();
             this.playerName = playerName;
         }
 
         public void addAccusePlay(String playerName, String accusedName)
         {
             //Add accused playing
-            if(accusedPlayers[playerName] != null)
+            List<String> accusedList;
+            if (accusedPlayers.TryGetValue(playerName, out accusedList))
             {
-                accusedPlayers[playerName].Add(accusedName);
+                accusedList.Add(accusedName);
+                accusedPlayers[playerName] = accusedList;
             }
             else
             {
                 accusedPlayers.Add(playerName, new List<string> { accusedName });
+            }
+        }
+
+        public void addSeerAnswer(String playerName, String roleName)
+        {
+            KeyValuePair<string, int> percentageRole;
+
+            if (roleBeliefs.TryGetValue(playerName, out percentageRole))
+            {
+                percentageRole = new KeyValuePair<string, int>(roleName, 100);
+                roleBeliefs[playerName] = percentageRole;
+            }
+            else
+            {
+                roleBeliefs.Add(playerName, new KeyValuePair<string, int>(roleName, 100));
             }
         }
 
@@ -67,23 +83,39 @@ namespace WereWolf
             //Lets infer first information - Player will not accuse himself
             foreach (string player in players)
             {
+                bool isRoleDecided = false;
                 if (player.Equals(playerName)) continue;
-                int randomNumber = rnd.Next(4);
-                if (randomNumber == 1)
+
+                KeyValuePair<string, int> percentageRole;
+
+                if (roleBeliefs.TryGetValue(player, out percentageRole))
                 {
-                    accuseSample.Add(new Player("Villager", false, player, true));
+                    int percentageSuccess = rnd.Next(100);
+                    if(percentageSuccess <= percentageRole.Value)
+                    {
+                        accuseSample.Add(new Player(percentageRole.Key, false, player, true));
+                        isRoleDecided = true;
+                    }
                 }
-                if (randomNumber == 2)
+                if(!isRoleDecided)
                 {
-                    accuseSample.Add(new Player("Seer", false, player, true));
-                }
-                if (randomNumber == 3)
-                {
-                    accuseSample.Add(new Player("Doctor", false, player, true));
-                }
-                if (randomNumber == 0)
-                {
-                    accuseSample.Add(new Player("Werewolf", false, player, true));
+                    int randomNumber = rnd.Next(4);
+                    if (randomNumber == 1)
+                    {
+                        accuseSample.Add(new Player("Villager", false, player, true));
+                    }
+                    if (randomNumber == 2)
+                    {
+                        accuseSample.Add(new Player("Seer", false, player, true));
+                    }
+                    if (randomNumber == 3)
+                    {
+                        accuseSample.Add(new Player("Doctor", false, player, true));
+                    }
+                    if (randomNumber == 0)
+                    {
+                        accuseSample.Add(new Player("Werewolf", false, player, true));
+                    }
                 }
             }
             return accuseSample;
@@ -100,10 +132,6 @@ namespace WereWolf
         {
             return players[rnd.Next(players.Count)];
         }
-        public string talkSample()
-        {
-            return talks[rnd.Next(talks.Count)];
-        }
         public string healSample()
         {
             return players[rnd.Next(players.Count)];
@@ -116,7 +144,17 @@ namespace WereWolf
 
         public Dictionary<String, int> getPossibleTalks()
         {
-            return talks.ToDictionary(x => x, x => 0);
+            Dictionary<String, int> possibleTalks = new Dictionary<String, int>();
+            if (roleBeliefs.Count > 0)
+            {
+                foreach (KeyValuePair<string, KeyValuePair<string, int>> role in roleBeliefs)
+                {
+                    possibleTalks.Add(string.Format("The player {0} is a {1}", role.Key, role.Value.Key), 0);
+                }
+            }
+            else possibleTalks.Add("I don't know", 0);
+
+            return possibleTalks;
         }
 
         public Dictionary<String, int> getPossibleAccuses()

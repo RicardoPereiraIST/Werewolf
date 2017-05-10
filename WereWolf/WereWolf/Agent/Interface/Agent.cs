@@ -25,5 +25,7 @@ namespace WereWolf
         string questionRound();
 
         void accusePlayedRound(string playerName, string accusedPlayerName);
+
+        void seerQuestion(string playerName, string roleName);
     }
 }

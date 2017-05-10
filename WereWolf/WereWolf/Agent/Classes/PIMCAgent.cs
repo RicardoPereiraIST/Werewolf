@@ -38,7 +38,10 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                string talkSample = infoSet.talkSample();
+                List<Player> accuseSample = new List<Player>();
+                accuseSample.Add(player.Copy());
+                accuseSample.AddRange(infoSet.accuseSample());
+
                 RolloutGame game;
                 int talkUtility;
 
@@ -138,6 +141,11 @@ namespace WereWolf
         public void accusePlayedRound(string playerName, string accusedPlayerName)
         {
             infoSet.addAccusePlay(playerName, accusedPlayerName);
+        }
+
+        public void seerQuestion(string playerName, string roleName)
+        {
+            infoSet.addSeerAnswer(playerName, roleName);
         }
     }
 }
