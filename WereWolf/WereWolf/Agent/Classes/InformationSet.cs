@@ -67,6 +67,7 @@ namespace WereWolf
         public void addFriend(string friend)
         {
             friends.Add(friend);
+            roleBeliefs.Add(friend, new KeyValuePair<string, int>("Werewolf", 100));
         }
 
         public void setPlayersList(List<String> p)

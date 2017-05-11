@@ -7,7 +7,7 @@ namespace WereWolf
     public class PIMCAgent : Agent
     {
         private InformationSet infoSet;
-        private const int N = 10;
+        private const int N = 3;
         private Player player;
 
         public PIMCAgent(Player player)
@@ -43,12 +43,14 @@ namespace WereWolf
                 accuseSample.AddRange(infoSet.Sample());
 
                 RolloutGame game;
-                int talkUtility;
 
-                foreach (string possibleTalk in possibleTalks.Keys)
+                foreach (string possibleTalk in infoSet.getPossibleTalks().Keys)
                 {
+                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
-
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.TALK);
+                    game.sampleGame(string.Format("talk {0}", possibleTalk));
+                    possibleTalks[possibleTalk] += game.evalGame(player.getCharName());
                 }
             }
 
@@ -89,12 +91,16 @@ namespace WereWolf
                 List<Player> accuseSample = new List<Player>();
                 accuseSample.Add(player.Copy());
                 accuseSample.AddRange(infoSet.Sample());
+
                 RolloutGame game;
-                int accuseUtility;
 
-                foreach (string possibleKill in possibleKills.Keys)
+                foreach (string possibleKill in infoSet.getPossibleKills().Keys)
                 {
+                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.KILL);
+                    game.sampleGame(string.Format("kill {0}", possibleKill));
+                    possibleKills[possibleKill] += game.evalGame(player.getCharName());
 
                 }
             }
@@ -112,11 +118,14 @@ namespace WereWolf
                 accuseSample.Add(player.Copy());
                 accuseSample.AddRange(infoSet.Sample());
                 RolloutGame game;
-                int accuseUtility;
 
-                foreach (string possibleHeal in possibleHeals.Keys)
+                foreach (string possibleHeal in infoSet.getPossibleHeals().Keys)
                 {
+                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.HEAL);
+                    game.sampleGame(string.Format("heal {0}", possibleHeal));
+                    possibleHeals[possibleHeal] += game.evalGame(player.getCharName());
                 }
             }
 
@@ -131,9 +140,8 @@ namespace WereWolf
             {
                 string talkSample = infoSet.questionSample();
                 RolloutGame game;
-                int accuseUtility;
 
-                foreach (string possibleQuestion in possibleQuestions.Keys)
+                foreach (string possibleQuestion in infoSet.getPossibleQuestions().Keys)
                 {
 
                 }

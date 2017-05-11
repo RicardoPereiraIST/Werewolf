@@ -24,14 +24,23 @@ namespace WereWolf
             roundVotes = new Dictionary<string, int>();
 
             List<String> names = new List<String>();
-
+            List<String> werewolves = new List<String>();
             foreach (Player p in players)
             {
                 names.Add(p.getPlayerName());
+                if (p.getCharName().Equals("Werewolf"))
+                {
+                    werewolves.Add(p.getPlayerName());
+                }
             }
+
             foreach (Player p in players)
             {
                 p.setPlayersList(names);
+                if (p.getCharName().Equals("Werewolf"))
+                {
+                    p.addFriends(werewolves);
+                }
             }
         }
 
@@ -50,7 +59,7 @@ namespace WereWolf
             return players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count() >= players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
         }
 
-        public int evalGame(string team)
+        public int evalGame2(string team)
         {
             if (werewolfesWin() && team.Equals("Werewolf"))
                 return players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
@@ -60,6 +69,41 @@ namespace WereWolf
             if(!werewolfesWin() && !team.Equals("Werewolf"))
                 return players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
             else return -players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+        }
+
+        public int evalGame(string team)
+        {
+            int result = 0;
+            if (werewolfesWin() && team.Equals("Werewolf"))
+            {
+                result = players.Where(p => p.getCharName().Equals("Seer") && p.isPlayerDead()).Count() * 4;
+                result += players.Where(p => p.getCharName().Equals("Doctor") && p.isPlayerDead()).Count() * 3;
+                result += players.Where(p => p.getCharName().Equals("Villager") && p.isPlayerDead()).Count() * 2;
+                result += players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+            }
+            else if (!werewolfesWin() && team.Equals("Werewolf"))
+            {
+                result = -players.Where(p => p.getCharName().Equals("Seer") && !p.isPlayerDead()).Count() * 4;
+                result -= players.Where(p => p.getCharName().Equals("Doctor")   && !p.isPlayerDead()).Count() * 3;
+                result -= players.Where(p => p.getCharName().Equals("Villager") && !p.isPlayerDead()).Count() * 2;
+                result -= players.Where(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead()).Count() * 2;
+            }
+
+            if (!werewolfesWin() && !team.Equals("Werewolf"))
+            {
+                result = players.Where(p => p.getCharName().Equals("Seer") && !p.isPlayerDead()).Count() * 3;
+                result += players.Where(p => p.getCharName().Equals("Doctor") && !p.isPlayerDead()).Count() * 2;
+                result += players.Where(p => p.getCharName().Equals("Villager") && !p.isPlayerDead()).Count();
+                result += players.Where(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead()).Count() * 5;
+            }
+            else
+            {
+                result -= players.Where(p => p.getCharName().Equals("Seer") && p.isPlayerDead()).Count() * 3;
+                result -= players.Where(p => p.getCharName().Equals("Doctor") && p.isPlayerDead()).Count() * 2;
+                result -= players.Where(p => p.getCharName().Equals("Villager") && p.isPlayerDead()).Count();
+                result -= players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count() * 5;
+            }
+            return result;
         }
         public void playRound(string command)
         {
