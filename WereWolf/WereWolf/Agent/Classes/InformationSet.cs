@@ -74,7 +74,7 @@ namespace WereWolf
             players = new List<String>(p);
         }
 
-        public List<Player> accuseSample()
+        public List<Player> Sample()
         {
             //TODO
             //Update beliefs based on accuses
@@ -127,14 +127,6 @@ namespace WereWolf
             if (accuseList.Count > 0)
                 return accuseList[rnd.Next(accuseList.Count)];
             else return string.Empty;
-        }
-        public string killSample()
-        {
-            return players[rnd.Next(players.Count)];
-        }
-        public string healSample()
-        {
-            return players[rnd.Next(players.Count)];
         }
 
         public string questionSample()

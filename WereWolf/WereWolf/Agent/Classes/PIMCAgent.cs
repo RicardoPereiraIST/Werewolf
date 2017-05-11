@@ -40,7 +40,7 @@ namespace WereWolf
             {
                 List<Player> accuseSample = new List<Player>();
                 accuseSample.Add(player.Copy());
-                accuseSample.AddRange(infoSet.accuseSample());
+                accuseSample.AddRange(infoSet.Sample());
 
                 RolloutGame game;
                 int talkUtility;
@@ -63,7 +63,7 @@ namespace WereWolf
             {
                 List<Player> accuseSample = new List<Player>();
                 accuseSample.Add(player.Copy());
-                accuseSample.AddRange(infoSet.accuseSample());
+                accuseSample.AddRange(infoSet.Sample());
 
                 RolloutGame game;
 
@@ -86,7 +86,9 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                string talkSample = infoSet.killSample();
+                List<Player> accuseSample = new List<Player>();
+                accuseSample.Add(player.Copy());
+                accuseSample.AddRange(infoSet.Sample());
                 RolloutGame game;
                 int accuseUtility;
 
@@ -106,7 +108,9 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                string talkSample = infoSet.healSample();
+                List<Player> accuseSample = new List<Player>();
+                accuseSample.Add(player.Copy());
+                accuseSample.AddRange(infoSet.Sample());
                 RolloutGame game;
                 int accuseUtility;
 
