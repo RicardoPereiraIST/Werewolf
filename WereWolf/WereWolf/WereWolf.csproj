@@ -50,6 +50,9 @@
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\RolloutGame.cs" />
     <Compile Include="General\Enums.cs" />
+    <Compile Include="Nodes\MaxNode.cs" />
+    <Compile Include="Nodes\PlayerNode.cs" />
+    <Compile Include="Nodes\RuleBasedNode.cs" />
     <Compile Include="Player\Classes\Doctor.cs" />
     <Compile Include="Player\Classes\Villager.cs" />
     <Compile Include="Player\Classes\Seer.cs" />
@@ -63,9 +66,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Nodes\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
