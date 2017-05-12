@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WereWolf.General;
 using System.Linq;
 using System.Text;
+using WereWolf.Nodes;
 
 namespace WereWolf
 {
@@ -13,125 +14,82 @@ namespace WereWolf
         public const int DOCTOR_NUMBER = 1;
         public const int VILLAGER_NUMBER = 2;
 
-        private List<Player> players;
+        private List<PlayerNode> players;
         private Dictionary<string, int> roundVotes;
         private GameStates gameState;
+        private int depth;
+        private int playerNumber = 0;
+        private string healedPlayer;
 
-        public RolloutGame(List<Player> players, GameStates gameState)
+        public RolloutGame(List<PlayerNode> players, GameStates gameState)
         {
-            this.players = new List<Player>(players);
+            this.players = new List<PlayerNode>(players);
             this.gameState = gameState;
             roundVotes = new Dictionary<string, int>();
-
-            List<String> names = new List<String>();
-            List<String> werewolves = new List<String>();
-            foreach (Player p in players)
-            {
-                names.Add(p.getPlayerName());
-                if (p.getCharName().Equals("Werewolf"))
-                {
-                    werewolves.Add(p.getPlayerName());
-                }
-            }
-
-            foreach (Player p in players)
-            {
-                p.setPlayersList(names);
-                if (p.getCharName().Equals("Werewolf"))
-                {
-                    p.addFriends(werewolves);
-                }
-            }
+            depth = 0;
+            healedPlayer = string.Empty;
         }
 
-        public void sampleGame(string command)
+        public int sampleGame(string command)
         {
-            playRound(command);
-            while (!isGameOver())
-            {
-                playRound(string.Empty);
-            }
+            PlayerNode player = players[0];
+            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, Int16.MaxValue, command);
+            return gameUtility;
+        }
+
+        public PlayerNode getNextPlayer()
+        {
+            return players[playerNumber];
+        }
+
+        public void UndoMove(string command)
+        {
+            playerNumber = playerNumber == 0 ? players.Count - 1 : playerNumber--;
         }
 
         private bool werewolfesWin()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
-            return players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count() >= players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
-        }
-
-        public int evalGame2(string team)
-        {
-            if (werewolfesWin() && team.Equals("Werewolf"))
-                return players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
-            else if(!werewolfesWin() && team.Equals("Werewolf"))
-                return -players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
-
-            if(!werewolfesWin() && !team.Equals("Werewolf"))
-                return players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
-            else return -players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+            return players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() >= players.Where(p => !p.charName.Equals("Werewolf") && !p.playerDead).Count();
         }
 
         public int evalGame(string team)
         {
             int result = 0;
-            if (werewolfesWin() && team.Equals("Werewolf"))
+            if (team.Equals("Werewolf"))
             {
-                result = players.Where(p => p.getCharName().Equals("Seer") && p.isPlayerDead()).Count() * 4;
-                result += players.Where(p => p.getCharName().Equals("Doctor") && p.isPlayerDead()).Count() * 3;
-                result += players.Where(p => p.getCharName().Equals("Villager") && p.isPlayerDead()).Count() * 2;
-                result += players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
-            }
-            else if (!werewolfesWin() && team.Equals("Werewolf"))
-            {
-                result = -players.Where(p => p.getCharName().Equals("Seer") && !p.isPlayerDead()).Count() * 4;
-                result -= players.Where(p => p.getCharName().Equals("Doctor")   && !p.isPlayerDead()).Count() * 3;
-                result -= players.Where(p => p.getCharName().Equals("Villager") && !p.isPlayerDead()).Count() * 2;
-                result -= players.Where(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead()).Count() * 2;
+                result = players.Where(p => p.charName.Equals("Seer") && p.playerDead).Count() * 4;
+                result += players.Where(p => p.charName.Equals("Doctor") && p.playerDead).Count() * 3;
+                result += players.Where(p => p.charName.Equals("Villager") && p.playerDead).Count() * 2;
+                result += players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count();
+                result = -players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 4;
+                result -= players.Where(p => p.charName.Equals("Doctor")   && !p.playerDead).Count() * 3;
+                result -= players.Where(p => p.charName.Equals("Villager") && !p.playerDead).Count();
+                result -= players.Where(p => p.charName.Equals("Werewolf") && p.playerDead).Count() * 2;
             }
 
-            if (!werewolfesWin() && !team.Equals("Werewolf"))
+            if (!team.Equals("Werewolf"))
             {
-                result = players.Where(p => p.getCharName().Equals("Seer") && !p.isPlayerDead()).Count() * 3;
-                result += players.Where(p => p.getCharName().Equals("Doctor") && !p.isPlayerDead()).Count() * 2;
-                result += players.Where(p => p.getCharName().Equals("Villager") && !p.isPlayerDead()).Count();
-                result += players.Where(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead()).Count() * 5;
-            }
-            else
-            {
-                result -= players.Where(p => p.getCharName().Equals("Seer") && p.isPlayerDead()).Count() * 3;
-                result -= players.Where(p => p.getCharName().Equals("Doctor") && p.isPlayerDead()).Count() * 2;
-                result -= players.Where(p => p.getCharName().Equals("Villager") && p.isPlayerDead()).Count();
-                result -= players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count() * 5;
+                result = players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 3;
+                result += players.Where(p => p.charName.Equals("Doctor") && !p.playerDead).Count() * 2;
+                result += players.Where(p => p.charName.Equals("Villager") && !p.playerDead).Count();
+                result += players.Where(p => p.charName.Equals("Werewolf") && p.playerDead).Count() * 5;
+                result -= players.Where(p => p.charName.Equals("Seer") && p.playerDead).Count() * 3;
+                result -= players.Where(p => p.charName.Equals("Doctor") && p.playerDead).Count() * 2;
+                result -= players.Where(p => p.charName.Equals("Villager") && p.playerDead).Count();
+                result -= players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() * 5;
             }
             return result;
         }
-        public void playRound(string command)
+
+
+        public void applyMove(string command)
         {
             StringBuilder roundSummary = new StringBuilder();
-            foreach (Player player in players)
+
+            if (!string.IsNullOrEmpty(command))
             {
-                string instructions = string.Empty;
-                if (player.isPlayerDead()) continue;
-
-                if (!string.IsNullOrEmpty(command))
-                {
-                    instructions = command;
-                    command = string.Empty;
-                }
-                else
-                {
-                    instructions = player.playRound(gameState);
-                }
-
-                if (!string.IsNullOrEmpty(instructions))
-                {
-                    roundSummary.AppendLine(runInstructions(instructions, player));
-                }
-            }
-
-            if (gameState == GameStates.KILL)
-            {
-                roundSummary.AppendLine(killLogic());
+                roundSummary.AppendLine(runInstructions(command, players[0]));
             }
 
             if (gameState == GameStates.ACCUSE)
@@ -142,28 +100,35 @@ namespace WereWolf
 
             if (gameState == GameStates.QUESTION)
             {
-                Player mostVotedPlayer = getMostVotedPlayer();
+                killLogic();
+                PlayerNode mostVotedPlayer = getMostVotedPlayer();
                 //ONLY for testing purposes this shouldnt happen with intelligent AI
                 if (mostVotedPlayer != null)
                 {
-                    roundSummary.AppendLine(string.Format("Player {0} was the choosen one to be killed.", mostVotedPlayer.getPlayerName()));
-                    if (mostVotedPlayer.isPlayerDead()) roundSummary.AppendLine(string.Format("Player {0} is dead forever.", mostVotedPlayer.getPlayerName()));
-                    if (!mostVotedPlayer.isPlayerDead()) roundSummary.AppendLine(string.Format("Player {0} is still alive because he was healed.", mostVotedPlayer.getPlayerName()));
+                    if (healedPlayer == mostVotedPlayer.playerName)
+                    {
+                        mostVotedPlayer.playerDead = false;
+                    }
                 }
-
-                roundSummary.AppendLine("\nRound finished.");
+                healedPlayer = string.Empty;
                 roundVotes.Clear();
             }
-            gameState = nextGameState();
 
-            broadcastRoundSummary(roundSummary.ToString());
+            gameState = nextGameState();
+            depth++;
+            playerNumber = (playerNumber+1) % players.Count;
+        }
+
+        public List<String> getPossibleAccuses(string playerName)
+        {
+            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => x.playerName).ToList();       
         }
 
         public bool isGameOver()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
-            bool allWereWolfsDead = players.All(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead() || !p.getCharName().Equals("Werewolf"));
-            bool allNonWerewolfsDead = players.Where(p => p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count() >= players.Where(p => !p.getCharName().Equals("Werewolf") && !p.isPlayerDead()).Count();
+            bool allWereWolfsDead = players.All(p => p.charName.Equals("Werewolf") && p.playerDead || !p.charName.Equals("Werewolf"));
+            bool allNonWerewolfsDead = players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() >= players.Where(p => !p.charName.Equals("Werewolf") && !p.playerDead).Count();
             return allWereWolfsDead || allNonWerewolfsDead;
         }
 
@@ -172,24 +137,15 @@ namespace WereWolf
             string result = "No player was accused this round";
 
             //Accuse Player Logic
-            Player accusedPlayer = getMostVotedPlayer();
+            PlayerNode accusedPlayer = getMostVotedPlayer();
 
             if (accusedPlayer != null)
             {
-                result = string.Format("Player {0} was accused and is now dead", accusedPlayer.getPlayerName());
-                accusedPlayer.killPlayer();
+                result = string.Format("Player {0} was accused and is now dead", accusedPlayer.playerName);
+                accusedPlayer.playerDead = true;
             }
 
             return result;
-        }
-
-        private void broadcastRoundSummary(string roundSummary)
-        {
-            foreach (Player player in players)
-            {
-                if (player.isPlayerDead()) continue;
-                player.applyRoundSummary(roundSummary);
-            }
         }
 
         private string killLogic()
@@ -197,20 +153,20 @@ namespace WereWolf
             string result = "No player was killed this round";
 
             //Kill Player Logic
-            Player killedPlayer = getMostVotedPlayer();
+            PlayerNode killedPlayer = getMostVotedPlayer();
 
             //This should never happen, just for testing sake
             if (killedPlayer != null)
             {
                 result = string.Format("A player has been chosen to be killed by the werewolfes");
-                killedPlayer.killPlayer();
+                killedPlayer.playerDead = true;
             }
 
             return result;
         }
 
 
-        private string runInstructions(string instructions, Player player)
+        private string runInstructions(string instructions, PlayerNode player)
         {
             String[] instructionList = instructions.Split(' ');
             string instruction = instructionList[0];
@@ -229,14 +185,14 @@ namespace WereWolf
                     return string.Empty;
 
                 case "talk":
-                    return string.Format("Player {0} says {1}", player.getPlayerName(), string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
+                    return string.Format("Player {0} says {1}", player.playerName, string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
 
                 case "accuse":
                     VotePlayer(instructionList[1]);
-                    return string.Format("Player {0} accuses {1}", player.getPlayerName(), instructionList[1]);
+                    return string.Format("Player {0} accuses {1}", player.playerName, instructionList[1]);
 
                 default:
-                    return string.Format("Player {0} passes", player.getPlayerName());
+                    return string.Format("Player {0} passes", player.playerName);
             }
         }
 
@@ -255,31 +211,30 @@ namespace WereWolf
             }
         }
 
-        private void QuestionPlayer(string playerName, Player player)
+        private void QuestionPlayer(string playerName, PlayerNode player)
         {
-            Player playerQuestioned = getPlayerByName(playerName);
-            player.seerAnswer(playerName, playerQuestioned.getCharName());
+            PlayerNode playerQuestioned = getPlayerByName(playerName);
+            //player.seerAnswer(playerName, playerQuestioned.charName);
         }
 
         private string HealPlayer(string playerName)
         {
-            string result = "No player was healed this round";
+            string result = "No player was healed this round\n";
 
             //Kill Player Logic
             string killedPlayerName = getMostVotedPlayerName();
 
             if (playerName.Equals(killedPlayerName))
             {
-                Player killedPlayer = getPlayerByName(killedPlayerName);
+                PlayerNode killedPlayer = getPlayerByName(killedPlayerName);
 
                 //This should never happen, just for testing sake
                 if (killedPlayer != null)
                 {
-                    result = string.Format("A player has been choosed to be healed.");
-                    killedPlayer.healPlayer();
+                    result = string.Format("A player has been choosed to be healed.\n");
+                    healedPlayer = playerName;
                 }
             }
-
             return result;
         }
 
@@ -288,39 +243,43 @@ namespace WereWolf
             return roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
         }
 
-        private Player getMostVotedPlayer()
+        private PlayerNode getMostVotedPlayer()
         {
             string votedPlayerName = roundVotes.FirstOrDefault(x => x.Value == roundVotes.Values.Max()).Key;
-            return players.FirstOrDefault(p => p.getPlayerName().Equals(votedPlayerName));
+            return players.FirstOrDefault(p => p.playerName.Equals(votedPlayerName));
         }
 
-        private Player getPlayerByName(string playerName)
+        private PlayerNode getPlayerByName(string playerName)
         {
-            return players.FirstOrDefault(p => p.getPlayerName().Equals(playerName));
+            return players.FirstOrDefault(p => p.playerName.Equals(playerName));
         }
 
         private GameStates nextGameState()
         {
-            switch (gameState)
+            if (playerNumber == players.Count - 1)
             {
-                case GameStates.TALK:
-                    return GameStates.ACCUSE;
+                switch (gameState)
+                {
+                    case GameStates.TALK:
+                        return GameStates.ACCUSE;
 
-                case GameStates.ACCUSE:
-                    return GameStates.KILL;
+                    case GameStates.ACCUSE:
+                        return GameStates.KILL;
 
-                case GameStates.KILL:
-                    return GameStates.HEAL;
+                    case GameStates.KILL:
+                        return GameStates.HEAL;
 
-                case GameStates.HEAL:
-                    return GameStates.QUESTION;
+                    case GameStates.HEAL:
+                        return GameStates.QUESTION;
 
-                case GameStates.QUESTION:
-                    return GameStates.TALK;
+                    case GameStates.QUESTION:
+                        return GameStates.TALK;
 
-                default:
-                    return GameStates.TALK;
+                    default:
+                        return GameStates.TALK;
+                }
             }
+            return gameState;
         }
     }
 }

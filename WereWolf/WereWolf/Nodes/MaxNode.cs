@@ -12,10 +12,16 @@ namespace WereWolf.Nodes
         {
         }
 
+        public override PlayerNode Copy()
+        {
+            return new MaxNode(playerName, charName, InfoSet);
+        }
+
         public override int PlayGame(RolloutGame game, int alpha, int beta, int depthLimit, string command)
         {
             //int v = Int16.MinValue;
-            Dictionary<string, int> possiblePlays;
+            List<string> possiblePlays = new List<string>();
+            int v = Int16.MinValue;
 
             if (/*game.reachedDepthLimit(depthLimit) ||*/ game.isGameOver())
             {
@@ -25,35 +31,38 @@ namespace WereWolf.Nodes
             if (string.IsNullOrEmpty(command))
             {
                 //TODO order by gameState
-                possiblePlays = InfoSet.getPossibleAccuses();
+                possiblePlays = game.getPossibleAccuses(playerName);
+            }
+            else
+            {
+                possiblePlays.Add(command);
             }
 
-            //foreach (string command in possiblePlays)
-            //{
-            //    Move move = new Move(Id, c);
-            //    game.ApplyMove(move);
-            //    int moveValue = game.GetNextPlayer().PlayGame(game, alpha, beta, depthLimit);
+            foreach (string playCommand in possiblePlays)
+            {
+                game.applyMove(playCommand);
+                
+                int moveValue = game.getNextPlayer().PlayGame(game, alpha, beta, depthLimit);
 
-            //    if (moveValue > v)
-            //    {
-            //        v = moveValue;
-            //    }
+                if (moveValue > v)
+                {
+                    v = moveValue;
+                }
 
-            //    game.UndoMove(move);
+                game.UndoMove(playCommand);
 
-            //    if (v >= beta)
-            //    {
-            //        return v;
-            //    }
+                if (v >= beta)
+                {
+                    return v;
+                }
 
-            //    if (v > alpha)
-            //    {
-            //        alpha = v;
-            //    }
-            //}
+                if (v > alpha)
+                {
+                    alpha = v;
+                }
+            }
 
-            //return v;
-            return 0;
+            return v;
         }
     }
 }

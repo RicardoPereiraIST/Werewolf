@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WereWolf.Nodes;
 
 namespace WereWolf
 {
@@ -107,11 +108,11 @@ namespace WereWolf
             }
         }
 
-        public List<Player> Sample()
+        public List<PlayerNode> Sample()
         {
             //TODO
             //Update beliefs based on accuses
-            List<Player> accuseSample = new List<Player>(players.Count);
+            List<PlayerNode> accuseSample = new List<PlayerNode>(players.Count);
 
             //Lets infer first information - Player will not accuse himself
             foreach (string player in players)
@@ -126,7 +127,7 @@ namespace WereWolf
                     int percentageSuccess = rnd.Next(100);
                     if(percentageSuccess <= percentageRole.Value)
                     {
-                        accuseSample.Add(new Player(percentageRole.Key, false, player, true));
+                        accuseSample.Add(new RuleBasedNode(player, percentageRole.Key, this));
                         isRoleDecided = true;
                     }
                 }
@@ -135,19 +136,19 @@ namespace WereWolf
                     int randomNumber = rnd.Next(4);
                     if (randomNumber == 1)
                     {
-                        accuseSample.Add(new Player("Villager", false, player, true));
+                        accuseSample.Add(new RuleBasedNode(player , "Villager", this));
                     }
                     if (randomNumber == 2)
                     {
-                        accuseSample.Add(new Player("Seer", false, player, true));
+                        accuseSample.Add(new RuleBasedNode(player, "Seer", this));
                     }
                     if (randomNumber == 3)
                     {
-                        accuseSample.Add(new Player("Doctor", false, player, true));
+                        accuseSample.Add(new RuleBasedNode(player, "Doctor", this));
                     }
                     if (randomNumber == 0)
                     {
-                        accuseSample.Add(new Player("Werewolf", false, player, true));
+                        accuseSample.Add(new RuleBasedNode(player, "Werewolf", this));
                     }
                 }
             }
@@ -158,7 +159,7 @@ namespace WereWolf
         {
             List<String> accuseList = players.Where(p => p != playerName).ToList();
             if (accuseList.Count > 0)
-                return accuseList[rnd.Next(accuseList.Count)];
+                return string.Format("accuse {0}", accuseList[rnd.Next(accuseList.Count)]);
             else return string.Empty;
         }
 
@@ -184,7 +185,7 @@ namespace WereWolf
 
         public Dictionary<String, int> getPossibleAccuses()
         {
-            return players.Select(x => x).Where(x => x != playerName && !friends.Contains(x)).ToDictionary(x => x , x => 0);
+            return players.Select(x => x).Where(x => x != playerName && !friends.Contains(x)).ToDictionary(x => string.Format("accuse {0}",x) , x => 0);
         }
 
         public Dictionary<String, int> getPossibleKills()

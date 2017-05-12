@@ -202,7 +202,8 @@ namespace WereWolf
             Player killedPlayer = getMostVotedPlayer();
 
             //This should never happen, just for testing sake
-            killedPlayer.killPlayer();
+            if(killedPlayer != null)
+                killedPlayer.killPlayer();
         }
 
 

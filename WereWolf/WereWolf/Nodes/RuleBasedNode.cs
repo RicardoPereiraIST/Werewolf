@@ -14,7 +14,33 @@ namespace WereWolf.Nodes
 
         public override int PlayGame(RolloutGame game, int alpha, int beta, int depthLimit, string command)
         {
-            return -1;
+            //int v = Int16.MinValue;
+            int v = Int16.MinValue;
+            string playCommand = command;
+
+            if (/*game.reachedDepthLimit(depthLimit) ||*/ game.isGameOver() || playerDead)
+            {
+                return game.evalGame(charName);
+            }
+
+            if (string.IsNullOrEmpty(command))
+            {
+                //TODO order by gameState
+                playCommand = InfoSet.ruledBasedAccuse();
+            }
+
+            game.applyMove(playCommand);
+
+            int moveValue = game.getNextPlayer().PlayGame(game, alpha, beta, depthLimit);
+
+            game.UndoMove(playCommand);
+
+            return v;
+        }
+
+        public override PlayerNode Copy()
+        {
+            return new RuleBasedNode(playerName, charName, InfoSet);
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using WereWolf.Nodes;
 
 namespace WereWolf
 {
     public class PIMCAgent : Agent
     {
         private InformationSet infoSet;
-        private const int N = 3;
+        private const int N = 1;
         private Player player;
         private bool liar;
 
@@ -54,15 +55,15 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                List<Player> accuseSample = new List<Player>();
-                accuseSample.Add(player.Copy());
+                List<PlayerNode> accuseSample = new List<PlayerNode>();
+                accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
                 accuseSample.AddRange(infoSet.Sample());
 
                 RolloutGame game;
 
                 foreach (string possibleTalk in infoSet.getPossibleTalks().Keys)
                 {
-                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
+                    List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.TALK);
                     game.sampleGame(string.Format("talk {0}", possibleTalk));
@@ -79,23 +80,23 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                List<Player> accuseSample = new List<Player>();
-                accuseSample.Add(player.Copy());
+                List<PlayerNode> accuseSample = new List<PlayerNode>();
+                accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
                 accuseSample.AddRange(infoSet.Sample());
 
                 RolloutGame game;
 
                 foreach (string possibleAccuse in infoSet.getPossibleAccuses().Keys)
                 {
-                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
+                    List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.ACCUSE);
-                    game.sampleGame(string.Format("accuse {0}", possibleAccuse));
+                    game.sampleGame(possibleAccuse);
                     possibleAccuses[possibleAccuse] += game.evalGame(player.getCharName());
                 }
             }
 
-            return string.Format("accuse {0}", possibleAccuses.FirstOrDefault(x => x.Value == possibleAccuses.Values.Max()).Key);
+            return possibleAccuses.FirstOrDefault(x => x.Value == possibleAccuses.Values.Max()).Key;
         }
 
         public string killRound()
@@ -104,15 +105,15 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                List<Player> accuseSample = new List<Player>();
-                accuseSample.Add(player.Copy());
+                List<PlayerNode> accuseSample = new List<PlayerNode>();
+                accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
                 accuseSample.AddRange(infoSet.Sample());
 
                 RolloutGame game;
 
                 foreach (string possibleKill in infoSet.getPossibleKills().Keys)
                 {
-                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
+                    List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.KILL);
                     game.sampleGame(string.Format("kill {0}", possibleKill));
@@ -130,14 +131,15 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                List<Player> accuseSample = new List<Player>();
-                accuseSample.Add(player.Copy());
+                List<PlayerNode> accuseSample = new List<PlayerNode>();
+                accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
                 accuseSample.AddRange(infoSet.Sample());
+
                 RolloutGame game;
 
                 foreach (string possibleHeal in infoSet.getPossibleHeals().Keys)
                 {
-                    List<Player> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
+                    List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.HEAL);
                     game.sampleGame(string.Format("heal {0}", possibleHeal));
