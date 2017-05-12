@@ -69,9 +69,20 @@ namespace WereWolf
 
         public void updateBeliefs(List<String> players, Dictionary<String, List<String>> accusedPlayers, List<String> savedPeople, Dictionary<String, PlayerBelief> beliefsPerPlayer)
         {
-            if (savedPeople.Contains(playerName))
+
+            if (accusedPlayers.ContainsKey(playerName))
             {
-                percents["Werewolf"] = 0;
+                List<String> accusedByPlayer = accusedPlayers[playerName];
+                foreach (String name in accusedByPlayer)
+                {
+                    if (beliefsPerPlayer.ContainsKey(name))
+                    {
+                        if (!players.Contains(name) && !beliefsPerPlayer[name].getRole().Item1.Equals("Werewolf"))
+                        {
+                            percents["Werewolf"] += 10;
+                        }
+                    }
+                }
             }
 
             foreach(String name in beliefsPerPlayer.Keys)
@@ -97,6 +108,32 @@ namespace WereWolf
                     }
                 }
             }
+
+            if (savedPeople.Contains(playerName))
+            {
+                percents["Werewolf"] = 0;
+            }
+
+            clampRoles();
+
+            Console.WriteLine("....");
+            Console.WriteLine(playerName);
+            foreach (String role in percents.Keys)
+                Console.WriteLine(role + "  -  " +  percents[role]);
+            Console.WriteLine("....");
+        }
+
+        private void clampRoles()
+        {
+            Dictionary<String, float> temp = new Dictionary<string, float>(percents);
+            foreach (String role in percents.Keys)
+            {
+                if (temp[role] < 0)
+                    temp[role] = 0;
+                if (temp[role] > 100)
+                    temp[role] = 100;
+            }
+            percents = temp;
         }
     }
 }

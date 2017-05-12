@@ -101,9 +101,12 @@ namespace WereWolf
 
         public void updateBeliefs()
         {
-            foreach(String player in beliefsPerPlayer.Keys)
-                if(!player.Equals(playerName))
+            foreach (String player in beliefsPerPlayer.Keys)
+                if (!player.Equals(playerName))
+                {
                     beliefsPerPlayer[player].updateBeliefs(players, accusedPlayers, savedPeople, beliefsPerPlayer);
+                }
+            accusedPlayers.Clear();
         }
 
         public void setPlayersList(List<String> p)
