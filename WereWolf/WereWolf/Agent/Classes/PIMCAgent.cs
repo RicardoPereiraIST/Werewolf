@@ -116,13 +116,12 @@ namespace WereWolf
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.KILL);
-                    game.sampleGame(string.Format("kill {0}", possibleKill));
-                    possibleKills[possibleKill] += game.evalGame(player.getCharName());
+                    possibleKills[possibleKill] += game.sampleGame(possibleKill);
 
                 }
             }
 
-            return string.Format("kill {0}", infoSet.ruledBasedAccuse());
+            return possibleKills.FirstOrDefault(x => x.Value == possibleKills.Values.Max()).Key;
         }
 
         public string healRound()

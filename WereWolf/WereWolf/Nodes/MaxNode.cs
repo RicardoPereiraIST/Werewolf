@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WereWolf.General;
 
 namespace WereWolf.Nodes
 {
@@ -30,8 +31,18 @@ namespace WereWolf.Nodes
 
             if (string.IsNullOrEmpty(command))
             {
-                //TODO order by gameState
-                possiblePlays = game.getPossibleAccuses(playerName);
+                switch(game.getGameState())
+                {
+                    case GameStates.ACCUSE:
+                        possiblePlays = game.getPossibleAccuses(playerName);
+                        break;
+                    case GameStates.KILL:
+                        possiblePlays = game.getPossibleKills(playerName);
+                        break;
+                    case GameStates.HEAL:
+                        possiblePlays = game.getPossibleHeals(playerName);
+                        break;
+                }
             }
             else
             {

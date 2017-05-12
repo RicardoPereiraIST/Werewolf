@@ -37,6 +37,11 @@ namespace WereWolf
             return gameUtility;
         }
 
+        public GameStates getGameState()
+        {
+            return gameState;
+        }
+
         public PlayerNode getNextPlayer()
         {
             return players[playerNumber];
@@ -121,7 +126,17 @@ namespace WereWolf
 
         public List<String> getPossibleAccuses(string playerName)
         {
-            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => x.playerName).ToList();       
+            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => string.Format("accuse {0}",x.playerName)).ToList();       
+        }
+
+        public List<String> getPossibleKills(string playerName)
+        {
+            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead && !x.charName.Equals("Werewolf")).Select(x => string.Format("kill {0}", x.playerName)).ToList();
+        }
+
+        public List<String> getPossibleHeals(string playerName)
+        {
+            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => string.Format("heal {0}", x.playerName)).ToList();
         }
 
         public bool isGameOver()
