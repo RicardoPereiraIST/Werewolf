@@ -32,6 +32,8 @@ namespace WereWolf
 
         void seerQuestion(string playerName, string roleName);
 
+        void addRole(String playerName, String playerRole);
+
         void updateBeliefs();
     }
 }

@@ -148,7 +148,7 @@ namespace WereWolf
                     roundSummary.AppendLine(string.Format("Player {0} was the choosen one to be killed.", mostVotedPlayer.getPlayerName()));
                     if (healedPlayer != mostVotedPlayer.getPlayerName())
                     {
-                        roundSummary.AppendLine(string.Format("Player {0} is dead forever.", mostVotedPlayer.getPlayerName()));
+                        roundSummary.AppendLine(string.Format("Player {0} is dead forever. His role was {1}", mostVotedPlayer.getPlayerName(), mostVotedPlayer.getCharName()));
                     }
                     else
                     {
@@ -181,7 +181,7 @@ namespace WereWolf
 
             if (accusedPlayer != null)
             {
-                result = string.Format("Player {0} was accused and is now dead", accusedPlayer.getPlayerName());
+                result = string.Format("Player {0} was accused and is now dead. His role was {1}", accusedPlayer.getPlayerName(), accusedPlayer.getCharName());
                 accusedPlayer.killPlayer();
             }
 

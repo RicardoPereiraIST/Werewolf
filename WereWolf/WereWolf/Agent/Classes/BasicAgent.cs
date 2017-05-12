@@ -39,6 +39,11 @@ namespace WereWolf
             infoSet.addSave(playerName);
         }
 
+        public void addRole(String playerName, String playerRole)
+        {
+            infoSet.addRole(playerName, playerRole);
+        }
+
         public void updateBeliefs()
         {
             infoSet.updateBeliefs();

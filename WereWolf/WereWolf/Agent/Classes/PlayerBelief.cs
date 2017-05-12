@@ -29,10 +29,17 @@ namespace WereWolf
         //FIXME
         public void addLog(String playerName, String playerRole)
         {
+            string actualValue;
+            foreach (Dictionary<String, String> talk in log)
+            {
+                if (talk.TryGetValue(playerName, out actualValue) && actualValue.Equals(playerRole))
+                    return;
+            }
+
+
             Dictionary<String, String> newDict = new Dictionary<String, String>();
             newDict.Add(playerName, playerRole);
-            if(!log.Contains(newDict))
-                log.Add(newDict);
+            log.Add(newDict);
         }
 
         public bool isLiar()
@@ -74,10 +81,12 @@ namespace WereWolf
                     Tuple<String, float> tuple = beliefsPerPlayer[name].getRole();
                     foreach (Dictionary<String, String> talk in log) {
                         if (talk.Keys.First().Equals(name)) {
-                            if (tuple.Item2 == 100) {
+                            if (tuple.Item2 == 100)
+                            {
                                 if (talk[name] != tuple.Item1)
                                 {
                                     liar = true;
+                                    break;
                                 }
                                 else
                                 {

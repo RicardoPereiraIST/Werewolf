@@ -70,7 +70,6 @@ namespace WereWolf
         public void addKillPlay(String playerName)
         {
             players.Remove(playerName);
-            beliefsPerPlayer.Remove(playerName);
         }
 
         public void addFriend(string friend)
@@ -82,13 +81,22 @@ namespace WereWolf
 
         public void addTalk(string talker, string playerName, string role)
         {
-            beliefsPerPlayer[talker].addLog(playerName, role);
+            if(players.Contains(playerName) && players.Contains(talker))
+                beliefsPerPlayer[talker].addLog(playerName, role);
         }
 
         public void addSave(string playerName)
         {
             if(!savedPeople.Contains(playerName))
                 savedPeople.Add(playerName);
+        }
+
+        public void addRole(String playerName, String playerRole)
+        {
+            if (beliefsPerPlayer.ContainsKey(playerName))
+            {
+                beliefsPerPlayer[playerName].addRole(playerRole);
+            }
         }
 
         public void updateBeliefs()

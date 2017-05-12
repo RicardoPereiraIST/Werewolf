@@ -120,11 +120,19 @@ namespace WereWolf
                     String[] playList = play.Split(' ');
                     if (playList.Length > 2)
                     {
-                         if(play.Contains("dead") || play.Contains("killed"))
-                           agent.killPlayer(playList[1]);
+                        if (play.Contains("dead"))
+                        { // || play.Contains("killed"))
+                            agent.killPlayer(playList[1]);
+                            if(play.Contains("accused"))
+                                agent.addRole(playList[1], playList[11]);
+                            else
+                                agent.addRole(playList[1], playList[8]);
+                        }
 
                         if (play.Contains("accuses"))
+                        {
                             agent.accusePlayedRound(playList[1], playList[3]);
+                        }
 
                         if (play.Contains("says") && !play.Contains("I don't know") && playList[1] != playerName && playList.Length >= 8)
                             agent.addTalk(playList[1], playList[5], playList[8]);
@@ -135,6 +143,8 @@ namespace WereWolf
                 }
             }
             agent.updateBeliefs();
+
+            //Console.WriteLine("-------");
         }
 
         public string playRound(GameStates gameState)
