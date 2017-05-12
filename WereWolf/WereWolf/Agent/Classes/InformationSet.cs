@@ -10,6 +10,7 @@ namespace WereWolf
     {
         private List<String> players;
         private Dictionary<String, List<String>> accusedPlayers;
+        private List<String> savedPeople;
 
         private Dictionary<String, KeyValuePair<String, int>> roleBeliefs;
         private string playerName;
@@ -29,6 +30,7 @@ namespace WereWolf
             roleBeliefs = new Dictionary<String, KeyValuePair<String, int>>();
             accusedPlayers = new Dictionary<String, List<String>>();
             beliefsPerPlayer = new Dictionary<string, PlayerBelief>();
+            savedPeople = new List<string>();
             this.playerName = playerName;
         }
 
@@ -60,17 +62,21 @@ namespace WereWolf
             {
                 roleBeliefs.Add(playerName, new KeyValuePair<string, int>(roleName, 100));
             }
+
+            beliefsPerPlayer[playerName].addRole(roleName);
         }
 
         public void addKillPlay(String playerName)
         {
             players.Remove(playerName);
+            beliefsPerPlayer.Remove(playerName);
         }
 
         public void addFriend(string friend)
         {
             friends.Add(friend);
             roleBeliefs.Add(friend, new KeyValuePair<string, int>("Werewolf", 100));
+            beliefsPerPlayer[friend].addRole("Werewolf");
         }
 
         public void addTalk(string talker, string playerName, string role)
@@ -78,12 +84,26 @@ namespace WereWolf
             beliefsPerPlayer[talker].addLog(playerName, role);
         }
 
+        public void addSave(string playerName)
+        {
+            if(!savedPeople.Contains(playerName))
+                savedPeople.Add(playerName);
+        }
+
+        public void updateBeliefs()
+        {
+            foreach(String player in beliefsPerPlayer.Keys)
+                if(!player.Equals(playerName))
+                    beliefsPerPlayer[player].updateBeliefs(players, accusedPlayers, savedPeople, beliefsPerPlayer);
+        }
+
         public void setPlayersList(List<String> p)
         {
             players = new List<String>(p);
             foreach (String name in players)
             {
-                beliefsPerPlayer.Add(name, new PlayerBelief());
+                if(!name.Equals(playerName))
+                    beliefsPerPlayer.Add(name, new PlayerBelief(name));
             }
         }
 

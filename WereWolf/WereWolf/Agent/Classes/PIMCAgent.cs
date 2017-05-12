@@ -37,6 +37,16 @@ namespace WereWolf
             infoSet.addTalk(talker, playerName, role);
         }
 
+        public void addSave(string playerName)
+        {
+            infoSet.addSave(playerName);
+        }
+
+        public void updateBeliefs()
+        {
+            infoSet.updateBeliefs();
+        }
+
         public string talkRound()
         {
             //Value of the talks, every one has a 0 value in the beginning.

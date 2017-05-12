@@ -128,9 +128,13 @@ namespace WereWolf
 
                         if (play.Contains("says") && !play.Contains("I don't know") && playList[1] != playerName)
                             agent.addTalk(playList[1], playList[5], playList[8]);
+
+                        if (play.Contains("alive"))
+                            agent.addSave(playList[1]);
                     }
                 }
             }
+            agent.updateBeliefs();
         }
 
         public string playRound(GameStates gameState)

@@ -16,6 +16,8 @@ namespace WereWolf
 
         void addTalk(string talker, string playerName, string role);
 
+        void addSave(string playerName);
+
         string talkRound();
 
         string accuseRound();
@@ -29,5 +31,7 @@ namespace WereWolf
         void accusePlayedRound(string playerName, string accusedPlayerName);
 
         void seerQuestion(string playerName, string roleName);
+
+        void updateBeliefs();
     }
 }
