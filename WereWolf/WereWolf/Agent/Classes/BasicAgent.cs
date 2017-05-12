@@ -29,6 +29,11 @@ namespace WereWolf
             infoSet.addFriend(friend);
         }
 
+        public void addTalk(string talker, string playerName, string role)
+        {
+            infoSet.addTalk(talker, playerName, role);
+        }
+
         public string talkRound()
         {
             //Value of the talks, every one has a 0 value in the beginning.

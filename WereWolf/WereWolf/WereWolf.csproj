@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agent\Classes\PlayerBelief.cs" />
     <Compile Include="Agent\Interface\Agent.cs" />
     <Compile Include="Agent\Classes\BasicAgent.cs" />
     <Compile Include="Agent\Classes\PIMCAgent.cs" />

@@ -125,6 +125,9 @@ namespace WereWolf
 
                         if (play.Contains("accuses"))
                             agent.accusePlayedRound(playList[1], playList[3]);
+
+                        if (play.Contains("says") && !play.Contains("I don't know") && playList[1] != playerName)
+                            agent.addTalk(playList[1], playList[5], playList[8]);
                     }
                 }
             }

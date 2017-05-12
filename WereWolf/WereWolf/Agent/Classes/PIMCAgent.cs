@@ -9,6 +9,7 @@ namespace WereWolf
         private InformationSet infoSet;
         private const int N = 3;
         private Player player;
+        private bool liar;
 
         public PIMCAgent(Player player)
         {
@@ -29,6 +30,11 @@ namespace WereWolf
         public void addFriend(string friend)
         {
             infoSet.addFriend(friend);
+        }
+
+        public void addTalk(string talker, string playerName, string role)
+        {
+            infoSet.addTalk(talker, playerName, role);
         }
 
         public string talkRound()

@@ -16,6 +16,8 @@ namespace WereWolf
 
         private List<string> friends;
 
+        private Dictionary<String, PlayerBelief> beliefsPerPlayer;
+
         //Dummy agent
         Random rnd;
 
@@ -26,6 +28,7 @@ namespace WereWolf
             friends = new List<string>();
             roleBeliefs = new Dictionary<String, KeyValuePair<String, int>>();
             accusedPlayers = new Dictionary<String, List<String>>();
+            beliefsPerPlayer = new Dictionary<string, PlayerBelief>();
             this.playerName = playerName;
         }
 
@@ -70,9 +73,18 @@ namespace WereWolf
             roleBeliefs.Add(friend, new KeyValuePair<string, int>("Werewolf", 100));
         }
 
+        public void addTalk(string talker, string playerName, string role)
+        {
+            beliefsPerPlayer[talker].addLog(playerName, role);
+        }
+
         public void setPlayersList(List<String> p)
         {
             players = new List<String>(p);
+            foreach (String name in players)
+            {
+                beliefsPerPlayer.Add(name, new PlayerBelief());
+            }
         }
 
         public List<Player> Sample()

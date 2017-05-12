@@ -14,6 +14,8 @@ namespace WereWolf
 
         void addFriend(string friend);
 
+        void addTalk(string talker, string playerName, string role);
+
         string talkRound();
 
         string accuseRound();
