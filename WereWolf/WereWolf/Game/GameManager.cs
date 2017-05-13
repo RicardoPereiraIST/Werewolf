@@ -97,9 +97,58 @@ namespace WereWolf
             return "Game Setup Sucessfull\n";
         }
 
+
         public List<Player> getPlayers()
         {
             return players;
+		}
+
+        public void ReinitializeGame()
+        {
+            players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
+
+            for (int i = 0; i < WEREWOLF_NUMBER; i++)
+            {
+                players[i].reinitializePlayer("Werewolf");
+            }
+
+            for (int i = 0; i < SEER_NUMBER; i++)
+            {
+                players[WEREWOLF_NUMBER+i].reinitializePlayer("Seer");
+            }
+
+            for (int i = 0; i < DOCTOR_NUMBER; i++)
+            {
+                players[WEREWOLF_NUMBER + SEER_NUMBER + i].reinitializePlayer("Doctor");
+            }
+
+            for (int i = 0; i < VILLAGER_NUMBER; i++)
+            {
+                players[WEREWOLF_NUMBER + SEER_NUMBER + DOCTOR_NUMBER + i].reinitializePlayer("Villager");
+            }
+
+            players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
+
+            List<String> names = new List<String>();
+            List<String> werewolves = new List<String>();
+
+            foreach (Player p in players)
+            {
+                names.Add(p.getPlayerName());
+                if (p.getCharName().Equals("Werewolf"))
+                {
+                    werewolves.Add(p.getPlayerName());
+                }
+            }
+
+            foreach (Player p in players)
+            {
+                p.setPlayersList(names);
+                if (p.getCharName().Equals("Werewolf"))
+                {
+                    p.addFriends(werewolves);
+                }
+            }
         }
 
         public bool isGameOver()
@@ -173,6 +222,7 @@ namespace WereWolf
             round = gameState == GameStates.TALK ? round + 1 : round;
 
             broadcastRoundSummary(roundSummary.ToString());
+            Console.WriteLine(roundSummary);
             if (isGameOver())
                 Console.WriteLine(string.Format("\nGame is over {0}", gameOverMessage()));
         }

@@ -26,6 +26,13 @@ namespace WereWolf
             isHuman = false;
         }
 
+        public void reinitializePlayer(string roleName)
+        {
+            character = CharacterAbstractFactory.CreatePlayer(roleName);
+            characterName = roleName;
+            agent.reinitializeBeliefs();
+        }
+
         public void setPlayerAsHuman(string playerName)
         {
             isHuman = true;

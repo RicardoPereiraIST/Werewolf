@@ -46,7 +46,7 @@ namespace WereWolf
         public int sampleGame(string command)
         {
             PlayerNode player = players[0];
-            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, 50, command);
+            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, 60, command);
             return gameUtility;
         }
 

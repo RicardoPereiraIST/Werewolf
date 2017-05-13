@@ -8,7 +8,7 @@ namespace WereWolf
     public class PIMCAgent : Agent
     {
         private InformationSet infoSet;
-        private const int N = 20;
+        private const int N = 10;
         private Player player;
         private bool liar;
 
@@ -184,6 +184,11 @@ namespace WereWolf
         public void seerQuestion(string playerName, string roleName)
         {
             infoSet.addSeerAnswer(playerName, roleName);
+        }
+
+        public void reinitializeBeliefs()
+        {
+            infoSet.reinitializeBeliefs();
         }
     }
 }

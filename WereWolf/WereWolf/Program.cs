@@ -10,6 +10,7 @@ namespace WereWolf
     {
         static void Main(string[] args)
         {
+            int numberOfGames = 0;
             Console.WriteLine("WELCOME TO THE WEREWOLF GAME");
             Console.Write("Is a human playing? (Y/N) : ");
             bool isPlayerPlaying = Console.ReadLine().Equals("Y");
@@ -19,6 +20,7 @@ namespace WereWolf
 
             GameManager gameManager = new GameManager();
             Console.WriteLine(gameManager.StartGame(isPlayerPlaying, playerName));
+			Console.WriteLine("Will start game at (N:15, No depth limit) :" + DateTime.Now);
 
             if (isPlayerPlaying)
             {
@@ -50,11 +52,16 @@ namespace WereWolf
                 }
                 Console.WriteLine();
             }
-
             do
             {
                 gameManager.playRound();
-            } while (!gameManager.isGameOver());
+                if (gameManager.isGameOver())
+                {
+                    Console.WriteLine("Will start another game with same players (role belief reset) :" + DateTime.Now);
+                    gameManager.ReinitializeGame();
+                    numberOfGames++;
+                }
+            } while (numberOfGames<20);
 
             Console.ReadLine();
         }

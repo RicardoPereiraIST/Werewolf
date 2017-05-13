@@ -63,6 +63,14 @@ namespace WereWolf
             beliefsPerPlayer[friend].addRole("Werewolf");
         }
 
+        public void reinitializeBeliefs()
+        {
+            foreach (PlayerBelief belief in beliefsPerPlayer.Values)
+            {
+                belief.reinitializeRoles();
+            }
+        }
+
         public void addTalk(string talker, string playerName, string role)
         {
             if(players.Contains(playerName) && players.Contains(talker))
@@ -98,7 +106,7 @@ namespace WereWolf
             players = new List<String>(p);
             foreach (String name in players)
             {
-                if(!name.Equals(playerName))
+                if(!name.Equals(playerName) && !beliefsPerPlayer.ContainsKey(name))
                     beliefsPerPlayer.Add(name, new PlayerBelief(name));
             }
         }

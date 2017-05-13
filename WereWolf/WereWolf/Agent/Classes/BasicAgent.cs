@@ -94,5 +94,10 @@ namespace WereWolf
         {
             infoSet.addSeerAnswer(playerName, roleName);
         }
+
+        public void reinitializeBeliefs()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

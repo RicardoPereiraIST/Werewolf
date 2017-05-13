@@ -67,6 +67,15 @@ namespace WereWolf
             percents[role] = 100;
         }
 
+        public void reinitializeRoles()
+        {
+            percents = new Dictionary<String, float>();
+            percents.Add("Werewolf", 0);
+            percents.Add("Seer", 0);
+            percents.Add("Doctor", 0);
+            percents.Add("Villager", 0);
+        }
+
         public void updateBeliefs(List<String> players, Dictionary<String, List<String>> accusedPlayers, List<String> savedPeople, Dictionary<String, PlayerBelief> beliefsPerPlayer)
         {
 
