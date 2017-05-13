@@ -45,6 +45,12 @@ namespace WereWolf.Nodes
                     case GameStates.HEAL:
                         if (character.canHeal()) possiblePlays = game.getPossibleHeals(playerName);
                         break;
+                    case GameStates.QUESTION:
+                        if (character.canQuestion()) possiblePlays = game.getPossibleQuestions(playerName);
+                        break;
+                    case GameStates.TALK:
+                        possiblePlays = InfoSet.getPossibleTalks().Select(x => x.Key).ToList();
+                        break;
                     default:
                         possiblePlays.Add("pass");
                         break;

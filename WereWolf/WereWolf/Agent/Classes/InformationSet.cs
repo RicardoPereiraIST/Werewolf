@@ -147,7 +147,7 @@ namespace WereWolf
                     int randomNumber = -1;
                     if (friends.Count > 0)
                         randomNumber = rnd.Next(1, 4);
-                    else rnd.Next(4);
+                    else randomNumber = rnd.Next(4);
 
                     if (randomNumber == 1)
                     {
@@ -190,10 +190,10 @@ namespace WereWolf
             {
                 foreach (KeyValuePair<string, KeyValuePair<string, int>> role in roleBeliefs)
                 {
-                    possibleTalks.Add(string.Format("The player {0} is a {1}", role.Key, role.Value.Key), 0);
+                    possibleTalks.Add(string.Format("talk The player {0} is a {1}", role.Key, role.Value.Key), 0);
                 }
             }
-            else possibleTalks.Add("I don't know", 0);
+            else possibleTalks.Add("talk I don't know", 0);
 
             return possibleTalks;
         }
@@ -210,12 +210,12 @@ namespace WereWolf
 
         public Dictionary<String, int> getPossibleQuestions()
         {
-            return players.Select(x => x).Where(x => x != playerName).ToDictionary(x => x, x => 0);
+            return players.Select(x => x).Where(x => x != playerName).ToDictionary(x => string.Format("question {0}", x), x => 0);
         }
 
         public Dictionary<String, int> getPossibleHeals()
         {
-            return players.Select(x => x).Where(x => x != playerName).ToDictionary(x => x, x => 0);
+            return players.Select(x => x).Where(x => x != playerName).ToDictionary(x => string.Format("heal {0}", x), x => 0);
         }
     }
 }

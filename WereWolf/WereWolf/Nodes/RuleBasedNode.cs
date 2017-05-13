@@ -50,6 +50,17 @@ namespace WereWolf.Nodes
                             playCommand = possiblePlays[rnd.Next(possiblePlays.Count)];
                         }
                         break;
+                    case GameStates.TALK:
+                        if (character.canHeal())
+                        {
+                            possiblePlays = InfoSet.getPossibleTalks().Select(x => x.Key).ToList();
+                            playCommand = possiblePlays[rnd.Next(possiblePlays.Count)];
+                        }
+                        break;
+                    case GameStates.QUESTION:
+                        possiblePlays = game.getPossibleQuestions(playerName);
+                        playCommand = possiblePlays[rnd.Next(possiblePlays.Count)];
+                        break;
                     default:
                         playCommand = "pass";
                         break;

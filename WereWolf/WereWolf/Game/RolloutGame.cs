@@ -153,6 +153,11 @@ namespace WereWolf
             return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => string.Format("heal {0}", x.playerName)).ToList();
         }
 
+        public List<String> getPossibleQuestions(string playerName)
+        {
+            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => string.Format("question {0}", x.playerName)).ToList();
+        }
+
         public bool isGameOver()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.

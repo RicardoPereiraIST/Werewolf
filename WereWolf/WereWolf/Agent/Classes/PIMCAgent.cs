@@ -71,12 +71,11 @@ namespace WereWolf
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.TALK, player.getCharName());
-                    game.sampleGame(string.Format("talk {0}", possibleTalk));
-                    possibleTalks[possibleTalk] += game.sampleGame(player.getCharName());
+                    possibleTalks[possibleTalk] += game.sampleGame(possibleTalk);
                 }
             }
 
-            return string.Format("talk {0}", possibleTalks.FirstOrDefault(x => x.Value == possibleTalks.Values.Max()).Key);
+            return possibleTalks.FirstOrDefault(x => x.Value == possibleTalks.Values.Max()).Key;
         }
 
         public string accuseRound()
@@ -96,8 +95,7 @@ namespace WereWolf
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.ACCUSE, player.getCharName());
-                    game.sampleGame(possibleAccuse);
-                    possibleAccuses[possibleAccuse] += game.sampleGame(player.getCharName());
+                    possibleAccuses[possibleAccuse] += game.sampleGame(possibleAccuse);
                 }
             }
 
@@ -146,12 +144,11 @@ namespace WereWolf
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
                     game = new RolloutGame(accuseSampleGame, General.GameStates.HEAL, player.getCharName());
-                    game.sampleGame(string.Format("heal {0}", possibleHeal));
-                    possibleHeals[possibleHeal] += game.sampleGame(player.getCharName());
+                    possibleHeals[possibleHeal] += game.sampleGame(possibleHeal);
                 }
             }
 
-            return string.Format("heal {0}", possibleHeals.FirstOrDefault(x => x.Value == possibleHeals.Values.Max()).Key);
+            return possibleHeals.FirstOrDefault(x => x.Value == possibleHeals.Values.Max()).Key;
         }
 
         public string questionRound()
@@ -160,16 +157,22 @@ namespace WereWolf
 
             for (int i = 0; i < N; i++)
             {
-                string talkSample = infoSet.questionSample();
+                List<PlayerNode> accuseSample = new List<PlayerNode>();
+                accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
+                accuseSample.AddRange(infoSet.Sample());
+
                 RolloutGame game;
 
                 foreach (string possibleQuestion in infoSet.getPossibleQuestions().Keys)
                 {
+                    List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.QUESTION, player.getCharName());
+                    possibleQuestions[possibleQuestion] += game.sampleGame(possibleQuestion);
                 }
             }
 
-            return string.Format("question {0}", possibleQuestions.FirstOrDefault(x => x.Value == possibleQuestions.Values.Max()).Key);
+            return possibleQuestions.FirstOrDefault(x => x.Value == possibleQuestions.Values.Max()).Key;
         }
 
         public void accusePlayedRound(string playerName, string accusedPlayerName)
