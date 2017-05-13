@@ -8,7 +8,7 @@ namespace WereWolf
     public class PIMCAgent : Agent
     {
         private InformationSet infoSet;
-        private const int N = 1;
+        private const int N = 20;
         private Player player;
         private bool liar;
 
@@ -70,9 +70,9 @@ namespace WereWolf
                 {
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
-                    game = new RolloutGame(accuseSampleGame, General.GameStates.TALK);
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.TALK, player.getCharName());
                     game.sampleGame(string.Format("talk {0}", possibleTalk));
-                    possibleTalks[possibleTalk] += game.evalGame(player.getCharName());
+                    possibleTalks[possibleTalk] += game.sampleGame(player.getCharName());
                 }
             }
 
@@ -95,9 +95,9 @@ namespace WereWolf
                 {
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
-                    game = new RolloutGame(accuseSampleGame, General.GameStates.ACCUSE);
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.ACCUSE, player.getCharName());
                     game.sampleGame(possibleAccuse);
-                    possibleAccuses[possibleAccuse] += game.evalGame(player.getCharName());
+                    possibleAccuses[possibleAccuse] += game.sampleGame(player.getCharName());
                 }
             }
 
@@ -120,7 +120,7 @@ namespace WereWolf
                 {
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
-                    game = new RolloutGame(accuseSampleGame, General.GameStates.KILL);
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.KILL, player.getCharName());
                     possibleKills[possibleKill] += game.sampleGame(possibleKill);
 
                 }
@@ -145,9 +145,9 @@ namespace WereWolf
                 {
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
-                    game = new RolloutGame(accuseSampleGame, General.GameStates.HEAL);
+                    game = new RolloutGame(accuseSampleGame, General.GameStates.HEAL, player.getCharName());
                     game.sampleGame(string.Format("heal {0}", possibleHeal));
-                    possibleHeals[possibleHeal] += game.evalGame(player.getCharName());
+                    possibleHeals[possibleHeal] += game.sampleGame(player.getCharName());
                 }
             }
 

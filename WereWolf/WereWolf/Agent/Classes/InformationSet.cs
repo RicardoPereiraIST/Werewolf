@@ -144,7 +144,11 @@ namespace WereWolf
                 }
                 if(!isRoleDecided)
                 {
-                    int randomNumber = rnd.Next(4);
+                    int randomNumber = -1;
+                    if (friends.Count > 0)
+                        randomNumber = rnd.Next(1, 4);
+                    else rnd.Next(4);
+
                     if (randomNumber == 1)
                     {
                         accuseSample.Add(new RuleBasedNode(player , "Villager", this));

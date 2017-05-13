@@ -20,20 +20,33 @@ namespace WereWolf
         private int depth;
         private int playerNumber = 0;
         private string healedPlayer;
+        private string team;
 
-        public RolloutGame(List<PlayerNode> players, GameStates gameState)
+        public RolloutGame(List<PlayerNode> players, GameStates gameState, string team)
         {
             this.players = new List<PlayerNode>(players);
             this.gameState = gameState;
             roundVotes = new Dictionary<string, int>();
             depth = 0;
             healedPlayer = string.Empty;
+            this.team = team;
+        }
+
+        public RolloutGame(List<PlayerNode> players, GameStates gameState, Dictionary<string, int> roundVotes, int depth, string healedPlayer, int playerNumber, string team)
+        {
+            this.players = new List<PlayerNode>(players);
+            this.gameState = gameState;
+            this.roundVotes = new Dictionary<string, int>(roundVotes);
+            this.depth = depth;
+            this.healedPlayer = healedPlayer;
+            this.playerNumber = playerNumber;
+            this.team = team;
         }
 
         public int sampleGame(string command)
         {
             PlayerNode player = players[0];
-            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, Int16.MaxValue, command);
+            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, 50, command);
             return gameUtility;
         }
 
@@ -47,30 +60,25 @@ namespace WereWolf
             return players[playerNumber];
         }
 
-        public void UndoMove(string command)
-        {
-            playerNumber = playerNumber == 0 ? players.Count - 1 : playerNumber--;
-        }
-
         private bool werewolfesWin()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
             return players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() >= players.Where(p => !p.charName.Equals("Werewolf") && !p.playerDead).Count();
         }
 
-        public int evalGame(string team)
+        public int evalGame()
         {
             int result = 0;
             if (team.Equals("Werewolf"))
             {
                 result = players.Where(p => p.charName.Equals("Seer") && p.playerDead).Count() * 4;
                 result += players.Where(p => p.charName.Equals("Doctor") && p.playerDead).Count() * 3;
-                result += players.Where(p => p.charName.Equals("Villager") && p.playerDead).Count() * 2;
-                result += players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count();
+                result += players.Where(p => p.charName.Equals("Villager") && p.playerDead).Count();
+                result += players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() * 5;
                 result = -players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 4;
                 result -= players.Where(p => p.charName.Equals("Doctor")   && !p.playerDead).Count() * 3;
                 result -= players.Where(p => p.charName.Equals("Villager") && !p.playerDead).Count();
-                result -= players.Where(p => p.charName.Equals("Werewolf") && p.playerDead).Count() * 2;
+                result -= players.Where(p => p.charName.Equals("Werewolf") && p.playerDead).Count() * 5;
             }
 
             if (!team.Equals("Werewolf"))
@@ -91,19 +99,21 @@ namespace WereWolf
         public void applyMove(string command)
         {
             StringBuilder roundSummary = new StringBuilder();
-
-            if (!string.IsNullOrEmpty(command))
+            if (!players[playerNumber].playerDead)
             {
-                roundSummary.AppendLine(runInstructions(command, players[0]));
+                if (!string.IsNullOrEmpty(command))
+                {
+                    roundSummary.AppendLine(runInstructions(command, players[0]));
+                }
             }
 
-            if (gameState == GameStates.ACCUSE)
+            if (nextGameState() != gameState && gameState == GameStates.KILL)
             {
                 roundSummary.AppendLine(accuseLogic());
                 roundVotes.Clear();
             }
 
-            if (gameState == GameStates.QUESTION)
+            if (nextGameState() != gameState && gameState == GameStates.TALK)
             {
                 killLogic();
                 PlayerNode mostVotedPlayer = getMostVotedPlayer();
@@ -118,10 +128,14 @@ namespace WereWolf
                 healedPlayer = string.Empty;
                 roundVotes.Clear();
             }
-
             gameState = nextGameState();
             depth++;
             playerNumber = (playerNumber+1) % players.Count;
+        }
+
+        public bool reachedDepthLimit(int depthLimit)
+        {
+            return depthLimit <= depth;
         }
 
         public List<String> getPossibleAccuses(string playerName)
@@ -295,6 +309,12 @@ namespace WereWolf
                 }
             }
             return gameState;
+        }
+
+        public RolloutGame Copy()
+        {
+            List<PlayerNode> lastPlayerNodes = players.Select(x => x.Copy()).ToList();
+            return new RolloutGame(lastPlayerNodes, gameState, roundVotes, depth, healedPlayer, playerNumber, team);
         }
     }
 }
