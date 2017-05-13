@@ -11,7 +11,7 @@ namespace WereWolf
 
         public BasicAgent(string playerName)
         {
-            infoSet = new InformationSet(playerName);
+            infoSet = new InformationSet(playerName, false);
         }
 
         public void setPlayersList(List<String> p)

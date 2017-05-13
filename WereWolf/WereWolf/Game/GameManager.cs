@@ -11,7 +11,7 @@ namespace WereWolf
         public const int WEREWOLF_NUMBER = 2;
         public const int SEER_NUMBER = 1;
         public const int DOCTOR_NUMBER = 1;
-        public const int VILLAGER_NUMBER = 3;
+        public const int VILLAGER_NUMBER = 5;
 
         private List<Player> players;
         private Dictionary<string, int> roundVotes;
@@ -42,25 +42,25 @@ namespace WereWolf
             {
                 for (int i = 0; i < WEREWOLF_NUMBER; i++)
                 {
-                    players.Add(new Player("Werewolf", playerNames[i]));
+                    players.Add(new Player("Werewolf", playerNames[i], rand.Next(1)==1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < SEER_NUMBER; i++)
                 {
-                    players.Add(new Player("Seer", playerNames[i]));
+                    players.Add(new Player("Seer", playerNames[i], rand.Next(1) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < DOCTOR_NUMBER; i++)
                 {
-                    players.Add(new Player("Doctor", playerNames[i]));
+                    players.Add(new Player("Doctor", playerNames[i], rand.Next(1) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < VILLAGER_NUMBER; i++)
                 {
-                    players.Add(new Player("Villager", playerNames[i]));
+                    players.Add(new Player("Villager", playerNames[i], rand.Next(1) == 1));
                     playerNames.RemoveAt(i);
                 }
 

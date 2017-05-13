@@ -116,11 +116,11 @@ namespace WereWolf
 
             clampRoles();
 
-            Console.WriteLine("....");
-            Console.WriteLine(playerName);
-            foreach (String role in percents.Keys)
-                Console.WriteLine(role + "  -  " +  percents[role]);
-            Console.WriteLine("....");
+            //Console.WriteLine("....");
+            //Console.WriteLine(playerName);
+            //foreach (String role in percents.Keys)
+            //    Console.WriteLine(role + "  -  " +  percents[role]);
+            //Console.WriteLine("....");
         }
 
         private void clampRoles()

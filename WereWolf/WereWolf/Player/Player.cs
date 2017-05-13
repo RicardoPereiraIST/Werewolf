@@ -15,28 +15,15 @@ namespace WereWolf
         private string characterName;
         private bool basicAgent;
 
-        public Player(string name, string playerName)
+        public Player(string name, string playerName, bool isLiar)
         {
             character = CharacterAbstractFactory.CreatePlayer(name);
             this.playerName = playerName;
             characterName = name;
-            agent = new PIMCAgent(this);
+            agent = new PIMCAgent(this, isLiar);
 
             basicAgent = false;
             isHuman = false;
-        }
-
-        public Player(string name, bool isHuman, string playerName, bool basicAgent)
-        {
-            character = CharacterAbstractFactory.CreatePlayer(name);
-            this.isHuman = isHuman;
-            this.playerName = playerName;
-            characterName = name;
-            if (basicAgent)
-                agent = new BasicAgent(playerName);
-            else agent = new PIMCAgent(this);
-
-            this.basicAgent = basicAgent;
         }
 
         public void setPlayerAsHuman(string playerName)
@@ -206,11 +193,6 @@ namespace WereWolf
                 }
                 return string.Empty;
             }
-        }
-
-        public Player Copy()
-        {
-            return new Player(characterName, false, playerName, basicAgent);
         }
     }
 }

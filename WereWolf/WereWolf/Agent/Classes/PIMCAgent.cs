@@ -12,10 +12,11 @@ namespace WereWolf
         private Player player;
         private bool liar;
 
-        public PIMCAgent(Player player)
+        public PIMCAgent(Player player, bool isLiar)
         {
-            infoSet = new InformationSet(player.getPlayerName());
+            infoSet = new InformationSet(player.getPlayerName(), isLiar);
             this.player = player;
+            this.liar = isLiar;
         }
 
         public void setPlayersList(List<String> p)

@@ -12,27 +12,24 @@ namespace WereWolf
         private List<String> players;
         private Dictionary<String, List<String>> accusedPlayers;
         private List<String> savedPeople;
-
-        private Dictionary<String, KeyValuePair<String, int>> roleBeliefs;
         private string playerName;
-
         private List<string> friends;
-
         private Dictionary<String, PlayerBelief> beliefsPerPlayer;
+        private bool liar;
 
         //Dummy agent
         Random rnd;
 
-        public InformationSet(string playerName)
+        public InformationSet(string playerName, bool isLiar)
         {
             players = new List<string>();
             rnd = new Random(Guid.NewGuid().GetHashCode());
             friends = new List<string>();
-            roleBeliefs = new Dictionary<String, KeyValuePair<String, int>>();
             accusedPlayers = new Dictionary<String, List<String>>();
             beliefsPerPlayer = new Dictionary<string, PlayerBelief>();
             savedPeople = new List<string>();
             this.playerName = playerName;
+            liar = isLiar;
         }
 
         public void addAccusePlay(String playerName, String accusedName)
@@ -52,18 +49,6 @@ namespace WereWolf
 
         public void addSeerAnswer(String playerName, String roleName)
         {
-            KeyValuePair<string, int> percentageRole;
-
-            if (roleBeliefs.TryGetValue(playerName, out percentageRole))
-            {
-                percentageRole = new KeyValuePair<string, int>(roleName, 100);
-                roleBeliefs[playerName] = percentageRole;
-            }
-            else
-            {
-                roleBeliefs.Add(playerName, new KeyValuePair<string, int>(roleName, 100));
-            }
-
             beliefsPerPlayer[playerName].addRole(roleName);
         }
 
@@ -75,7 +60,6 @@ namespace WereWolf
         public void addFriend(string friend)
         {
             friends.Add(friend);
-            roleBeliefs.Add(friend, new KeyValuePair<string, int>("Werewolf", 100));
             beliefsPerPlayer[friend].addRole("Werewolf");
         }
 
@@ -131,14 +115,15 @@ namespace WereWolf
                 bool isRoleDecided = false;
                 if (player.Equals(playerName)) continue;
 
-                KeyValuePair<string, int> percentageRole;
+                PlayerBelief playerBelief;
 
-                if (roleBeliefs.TryGetValue(player, out percentageRole))
+                if (beliefsPerPlayer.TryGetValue(player, out playerBelief))
                 {
                     int percentageSuccess = rnd.Next(100);
-                    if(percentageSuccess <= percentageRole.Value)
+                    Tuple<string,float> roleBelief = playerBelief.getRole();
+                    if (percentageSuccess <= roleBelief.Item2)
                     {
-                        accuseSample.Add(new RuleBasedNode(player, percentageRole.Key, this));
+                        accuseSample.Add(new RuleBasedNode(player, roleBelief.Item1, this));
                         isRoleDecided = true;
                     }
                 }
@@ -186,14 +171,21 @@ namespace WereWolf
         public Dictionary<String, int> getPossibleTalks()
         {
             Dictionary<String, int> possibleTalks = new Dictionary<String, int>();
-            if (roleBeliefs.Count > 0)
+            if (beliefsPerPlayer.Count > 0)
             {
-                foreach (KeyValuePair<string, KeyValuePair<string, int>> role in roleBeliefs)
+                foreach (KeyValuePair<string, PlayerBelief> playerBelief in beliefsPerPlayer)
                 {
-                    possibleTalks.Add(string.Format("talk The player {0} is a {1}", role.Key, role.Value.Key), 0);
+                    Tuple<string, float> belief = playerBelief.Value.getRole();
+
+                    if (!players.Contains(playerBelief.Key)) continue;
+                    if (belief.Item2 >= 100 && !liar)
+                        possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, belief.Item1), 0);
+                    else if(belief.Item2 < 100 && liar)
+                        possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, belief.Item1), 0);
                 }
             }
-            else possibleTalks.Add("talk I don't know", 0);
+
+            if(possibleTalks.Count == 0) possibleTalks.Add("talk I don't know", 0);
 
             return possibleTalks;
         }
