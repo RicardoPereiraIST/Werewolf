@@ -75,7 +75,7 @@ namespace WereWolf
                 result += players.Where(p => p.charName.Equals("Doctor") && p.playerDead).Count() * 3;
                 result += players.Where(p => p.charName.Equals("Villager") && p.playerDead).Count();
                 result += players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() * 5;
-                result = -players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 4;
+                result -= -players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 4;
                 result -= players.Where(p => p.charName.Equals("Doctor")   && !p.playerDead).Count() * 3;
                 result -= players.Where(p => p.charName.Equals("Villager") && !p.playerDead).Count();
                 result -= players.Where(p => p.charName.Equals("Werewolf") && p.playerDead).Count() * 5;
