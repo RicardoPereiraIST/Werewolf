@@ -155,7 +155,7 @@ namespace WereWolf
                 }
                 else if (gameState == GameStates.TALK)
                 {
-                    instructions.AppendLine("- talk \"phrase\"");
+                    instructions.AppendLine("- talk \"PlayerName Role\"");
                 }
                 else if (gameState == GameStates.ACCUSE)
                 {
@@ -166,7 +166,19 @@ namespace WereWolf
                 instructions.AppendLine("- pass");
 
                 Console.Write(instructions.ToString());
-                return Console.ReadLine();
+
+                String instruction = Console.ReadLine();
+
+                if (gameState == GameStates.TALK && !instruction.Equals("pass"))
+                {
+                    String[] playList = instruction.Split(' ');
+                    if (playList.Length == 3)
+                        instruction = "talk The player " + playList[1] + " is a " + playList[2];
+                    else
+                        instruction = "talk I don't know";
+                }
+
+                return instruction;
             }
             else
             {

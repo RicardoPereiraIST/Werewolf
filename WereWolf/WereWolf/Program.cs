@@ -19,6 +19,38 @@ namespace WereWolf
 
             GameManager gameManager = new GameManager();
             Console.WriteLine(gameManager.StartGame(isPlayerPlaying, playerName));
+
+            if (isPlayerPlaying)
+            {
+                List<Player> players = gameManager.getPlayers();
+                bool isPlayerWolf = false;
+                String role = "";
+
+                foreach (Player player in players)
+                {
+                    if (player.getPlayerName().Equals(playerName))
+                    {
+                        role = player.getCharName();
+                        break;
+                    }
+                }
+                
+                if(role.Equals("Werewolf"))
+                    isPlayerWolf = true;
+
+                Console.WriteLine("You are a " + role);
+                Console.WriteLine("\nThe names of the players are:");
+
+                foreach (Player player in players)
+                {
+                    if (isPlayerWolf && player.getCharName().Equals("Werewolf"))
+                        Console.WriteLine(player.getPlayerName() + " - Werewolf");
+                    else
+                        Console.WriteLine(player.getPlayerName());
+                }
+                Console.WriteLine();
+            }
+
             do
             {
                 gameManager.playRound();

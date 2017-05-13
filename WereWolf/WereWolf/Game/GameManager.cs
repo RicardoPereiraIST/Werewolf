@@ -97,6 +97,11 @@ namespace WereWolf
             return "Game Setup Sucessfull\n";
         }
 
+        public List<Player> getPlayers()
+        {
+            return players;
+        }
+
         public bool isGameOver()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
