@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using WereWolf.General;
 
@@ -32,21 +33,8 @@ namespace WereWolf
 
             gameState = GameStates.KILL;
             rand = new Random(Guid.NewGuid().GetHashCode());
-            Shuffle(playerNames);
+            playerNames = playerNames.OrderBy(a => Guid.NewGuid()).ToList();
             healedPlayer = string.Empty;
-        }
-
-        public void Shuffle(IList<String> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = rand.Next(n + 1);
-                String value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
         }
 
         public string StartGame(bool isPlayerPlaying, string playerName)
@@ -162,6 +150,8 @@ namespace WereWolf
                     p.addFriends(werewolves);
                 }
             }
+
+            gameState = GameStates.KILL;
         }
 
         public bool isGameOver()
