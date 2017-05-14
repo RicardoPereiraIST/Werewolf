@@ -46,7 +46,7 @@ namespace WereWolf
         public int sampleGame(string command)
         {
             PlayerNode player = players[0];
-            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, 60, command);
+            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, 100, command);
             return gameUtility;
         }
 
@@ -140,7 +140,9 @@ namespace WereWolf
 
         public List<String> getPossibleAccuses(string playerName)
         {
-            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => string.Format("accuse {0}",x.playerName)).ToList();       
+            List<String> possibleAccuses = players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => string.Format("accuse {0}", x.playerName)).ToList();
+            possibleAccuses.Add("pass");
+            return possibleAccuses;
         }
 
         public List<String> getPossibleKills(string playerName)
@@ -150,7 +152,7 @@ namespace WereWolf
 
         public List<String> getPossibleHeals(string playerName)
         {
-            return players.Select(x => x).Where(x => x.playerName != playerName && !x.playerDead).Select(x => string.Format("heal {0}", x.playerName)).ToList();
+            return players.Select(x => x).Where(x => !x.playerDead).Select(x => string.Format("heal {0}", x.playerName)).ToList();
         }
 
         public List<String> getPossibleQuestions(string playerName)

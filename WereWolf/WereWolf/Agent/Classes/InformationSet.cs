@@ -68,6 +68,8 @@ namespace WereWolf
             foreach (PlayerBelief belief in beliefsPerPlayer.Values)
             {
                 belief.reinitializeRoles();
+                friends.Clear();
+                players.Clear();
             }
         }
 
@@ -200,7 +202,9 @@ namespace WereWolf
 
         public Dictionary<String, int> getPossibleAccuses()
         {
-            return players.Select(x => x).Where(x => x != playerName && !friends.Contains(x)).ToDictionary(x => string.Format("accuse {0}",x) , x => 0);
+            Dictionary<String, int> possibleAccuses = players.Select(x => x).Where(x => x != playerName && !friends.Contains(x)).ToDictionary(x => string.Format("accuse {0}", x), x => 0);
+            possibleAccuses.Add("pass", 0);
+            return possibleAccuses;
         }
 
         public Dictionary<String, int> getPossibleKills()
@@ -215,7 +219,7 @@ namespace WereWolf
 
         public Dictionary<String, int> getPossibleHeals()
         {
-            return players.Select(x => x).Where(x => x != playerName).ToDictionary(x => string.Format("heal {0}", x), x => 0);
+            return players.Select(x => x).ToDictionary(x => string.Format("heal {0}", x), x => 0);
         }
     }
 }

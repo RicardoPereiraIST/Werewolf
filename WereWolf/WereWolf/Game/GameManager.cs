@@ -32,8 +32,21 @@ namespace WereWolf
 
             gameState = GameStates.KILL;
             rand = new Random(Guid.NewGuid().GetHashCode());
-            playerNames = playerNames.OrderBy(c => rand.Next()).Select(c => c).ToList();
+            Shuffle(playerNames);
             healedPlayer = string.Empty;
+        }
+
+        public void Shuffle(IList<String> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rand.Next(n + 1);
+                String value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
 
         public string StartGame(bool isPlayerPlaying, string playerName)
