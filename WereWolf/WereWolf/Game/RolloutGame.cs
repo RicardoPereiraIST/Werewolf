@@ -9,11 +9,6 @@ namespace WereWolf
 {
     public class RolloutGame
     {
-        public const int WEREWOLF_NUMBER = 2;
-        public const int SEER_NUMBER = 1;
-        public const int DOCTOR_NUMBER = 1;
-        public const int VILLAGER_NUMBER = 2;
-
         private List<PlayerNode> players;
         private Dictionary<string, int> roundVotes;
         private GameStates gameState;
