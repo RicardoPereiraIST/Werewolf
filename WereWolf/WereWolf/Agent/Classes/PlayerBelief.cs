@@ -26,6 +26,11 @@ namespace WereWolf
             percents.Add("Villager", 0);
         }
 
+        public List<Dictionary<String, String>> getLog()
+        {
+            return log;
+        }
+
         //FIXME
         public void addLog(String playerName, String playerRole)
         {
@@ -47,6 +52,11 @@ namespace WereWolf
             return liar;
         }
 
+        public float getPercentOfRole(String role)
+        {
+            return percents[role];
+        }
+
         public Tuple<String, float> getRole()
         {
             float max = percents.FirstOrDefault(x => x.Value == percents.Values.Max()).Value;
@@ -65,6 +75,11 @@ namespace WereWolf
         public void addRole(String role)
         {
             percents[role] = 100;
+        }
+
+        public void setRole(String role, float value)
+        {
+            percents[role] = value;
         }
 
         public void reinitializeRoles()
@@ -101,7 +116,7 @@ namespace WereWolf
                     Tuple<String, float> tuple = beliefsPerPlayer[name].getRole();
                     foreach (Dictionary<String, String> talk in log) {
                         if (talk.Keys.First().Equals(name)) {
-                            if (tuple.Item2 == 100)
+                            if (tuple.Item2 >= 80)
                             {
                                 if (talk[name] != tuple.Item1)
                                 {
@@ -111,6 +126,109 @@ namespace WereWolf
                                 else
                                 {
                                     liar = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //SEER AND LIARS
+            foreach (String name in beliefsPerPlayer.Keys)
+            {
+                if (!name.Equals(playerName))
+                {
+                    Tuple<String, float> tuple = beliefsPerPlayer[name].getRole();
+                    if(tuple.Item1.Equals("Seer"))
+                    {
+                        if (!beliefsPerPlayer[name].isLiar())
+                        {
+                            foreach (Dictionary<String, String> talk in beliefsPerPlayer[name].getLog())
+                            {
+                                if (beliefsPerPlayer.ContainsKey(talk.Keys.First()))
+                                {
+                                    beliefsPerPlayer[talk.Keys.First()].addRole(talk.Values.First());
+                                }
+                            }
+
+                            if (accusedPlayers.ContainsKey(name))
+                            {
+                                List<String> accusedByPlayer = accusedPlayers[name];
+                                foreach (String n in accusedByPlayer)
+                                {
+                                    if (beliefsPerPlayer.ContainsKey(n))
+                                    {
+                                        beliefsPerPlayer[n].setRole("Werewolf", 100);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (Dictionary<String, String> talk in beliefsPerPlayer[name].getLog())
+                            {
+                                if (beliefsPerPlayer.ContainsKey(talk.Keys.First()))
+                                {
+                                    beliefsPerPlayer[talk.Keys.First()].setRole(talk.Values.First(), 0);
+                                }
+                            }
+
+                            if (accusedPlayers.ContainsKey(name))
+                            {
+                                List<String> accusedByPlayer = accusedPlayers[name];
+                                foreach (String n in accusedByPlayer)
+                                {
+                                    if (beliefsPerPlayer.ContainsKey(n))
+                                    {
+                                        beliefsPerPlayer[n].setRole("Werewolf", 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!beliefsPerPlayer[name].isLiar())
+                        {
+                            foreach (Dictionary<String, String> talk in beliefsPerPlayer[name].getLog())
+                            {
+                                if (beliefsPerPlayer.ContainsKey(talk.Keys.First()))
+                                {
+                                    beliefsPerPlayer[talk.Keys.First()].setRole(talk.Values.First(), beliefsPerPlayer[talk.Keys.First()].getPercentOfRole(talk.Values.First()) + 10);
+                                }
+                            }
+
+                            if (accusedPlayers.ContainsKey(name))
+                            {
+                                List<String> accusedByPlayer = accusedPlayers[name];
+                                foreach (String n in accusedByPlayer)
+                                {
+                                    if (beliefsPerPlayer.ContainsKey(n))
+                                    {
+                                        beliefsPerPlayer[n].setRole("Werewolf", beliefsPerPlayer[n].getPercentOfRole("Werewolf") + 10);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (Dictionary<String, String> talk in beliefsPerPlayer[name].getLog())
+                            {
+                                if (beliefsPerPlayer.ContainsKey(talk.Keys.First()))
+                                {
+                                    beliefsPerPlayer[talk.Keys.First()].setRole(talk.Values.First(), beliefsPerPlayer[talk.Keys.First()].getPercentOfRole(talk.Values.First()) - 10);
+                                }
+                            }
+
+                            if (accusedPlayers.ContainsKey(name))
+                            {
+                                List<String> accusedByPlayer = accusedPlayers[name];
+                                foreach (String n in accusedByPlayer)
+                                {
+                                    if (beliefsPerPlayer.ContainsKey(n))
+                                    {
+                                        beliefsPerPlayer[n].setRole("Werewolf", beliefsPerPlayer[n].getPercentOfRole("Werewolf") - 10);
+                                    }
                                 }
                             }
                         }
