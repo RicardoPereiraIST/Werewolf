@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
+using WereWolf.General;
 using System.Text;
 using WereWolf.General;
 
@@ -9,11 +9,6 @@ namespace WereWolf
 {
     public class GameManager
     {
-        public const int WEREWOLF_NUMBER = 2;
-        public const int SEER_NUMBER = 1;
-        public const int DOCTOR_NUMBER = 1;
-        public const int VILLAGER_NUMBER = 3;
-
         private List<Player> players;
         private Dictionary<string, int> roundVotes;
         private string healedPlayer;
@@ -41,25 +36,25 @@ namespace WereWolf
         {
             try
             {
-                for (int i = 0; i < WEREWOLF_NUMBER; i++)
+                for (int i = 0; i <Constants.WEREWOLF_NUMBER; i++)
                 {
                     players.Add(new Player("Werewolf", playerNames[i], rand.Next(1)==1));
                     playerNames.RemoveAt(i);
                 }
 
-                for (int i = 0; i < SEER_NUMBER; i++)
+                for (int i = 0; i < Constants.SEER_NUMBER; i++)
                 {
                     players.Add(new Player("Seer", playerNames[i], rand.Next(1) == 1));
                     playerNames.RemoveAt(i);
                 }
 
-                for (int i = 0; i < DOCTOR_NUMBER; i++)
+                for (int i = 0; i < Constants.DOCTOR_NUMBER; i++)
                 {
                     players.Add(new Player("Doctor", playerNames[i], rand.Next(1) == 1));
                     playerNames.RemoveAt(i);
                 }
 
-                for (int i = 0; i < VILLAGER_NUMBER; i++)
+                for (int i = 0; i < Constants.VILLAGER_NUMBER; i++)
                 {
                     players.Add(new Player("Villager", playerNames[i], rand.Next(1) == 1));
                     playerNames.RemoveAt(i);
@@ -108,24 +103,24 @@ namespace WereWolf
         {
             players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
 
-            for (int i = 0; i < WEREWOLF_NUMBER; i++)
+            for (int i = 0; i < Constants.WEREWOLF_NUMBER; i++)
             {
                 players[i].reinitializePlayer("Werewolf");
             }
 
-            for (int i = 0; i < SEER_NUMBER; i++)
+            for (int i = 0; i < Constants.SEER_NUMBER; i++)
             {
-                players[WEREWOLF_NUMBER+i].reinitializePlayer("Seer");
+                players[Constants.WEREWOLF_NUMBER +i].reinitializePlayer("Seer");
             }
 
-            for (int i = 0; i < DOCTOR_NUMBER; i++)
+            for (int i = 0; i < Constants.DOCTOR_NUMBER; i++)
             {
-                players[WEREWOLF_NUMBER + SEER_NUMBER + i].reinitializePlayer("Doctor");
+                players[Constants.WEREWOLF_NUMBER + Constants.SEER_NUMBER + i].reinitializePlayer("Doctor");
             }
 
-            for (int i = 0; i < VILLAGER_NUMBER; i++)
+            for (int i = 0; i < Constants.VILLAGER_NUMBER; i++)
             {
-                players[WEREWOLF_NUMBER + SEER_NUMBER + DOCTOR_NUMBER + i].reinitializePlayer("Villager");
+                players[Constants.WEREWOLF_NUMBER + Constants.SEER_NUMBER + Constants.DOCTOR_NUMBER + i].reinitializePlayer("Villager");
             }
 
             players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();

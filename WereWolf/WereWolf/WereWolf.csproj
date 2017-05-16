@@ -50,6 +50,7 @@
     <Compile Include="Agent\Classes\InformationSet.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\RolloutGame.cs" />
+    <Compile Include="General\Constants.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="Nodes\MaxNode.cs" />
     <Compile Include="Nodes\PlayerNode.cs" />

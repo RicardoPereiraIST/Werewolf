@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WereWolf.General;
 using WereWolf.Nodes;
 
 namespace WereWolf
@@ -11,6 +10,7 @@ namespace WereWolf
     {
         private List<String> players;
         private Dictionary<String, List<String>> accusedPlayers;
+        private Dictionary<String, int> playersLeft;
         private List<String> savedPeople;
         private string playerName;
         private List<string> friends;
@@ -29,6 +29,11 @@ namespace WereWolf
             beliefsPerPlayer = new Dictionary<string, PlayerBelief>();
             savedPeople = new List<string>();
             this.playerName = playerName;
+            playersLeft = new Dictionary<string, int>();
+            playersLeft.Add("Werewolf", Constants.WEREWOLF_NUMBER);
+            playersLeft.Add("Seer", Constants.SEER_NUMBER);
+            playersLeft.Add("Doctor", Constants.DOCTOR_NUMBER);
+            playersLeft.Add("Villager", Constants.VILLAGER_NUMBER);
             liar = isLiar;
         }
 
@@ -68,9 +73,16 @@ namespace WereWolf
             foreach (PlayerBelief belief in beliefsPerPlayer.Values)
             {
                 belief.reinitializeRoles();
-                friends.Clear();
-                players.Clear();
             }
+            friends.Clear();
+            players.Clear();
+            accusedPlayers.Clear();
+            playersLeft.Clear();
+
+            playersLeft.Add("Werewolf", Constants.WEREWOLF_NUMBER);
+            playersLeft.Add("Seer", Constants.SEER_NUMBER);
+            playersLeft.Add("Doctor", Constants.DOCTOR_NUMBER);
+            playersLeft.Add("Villager", Constants.VILLAGER_NUMBER);
         }
 
         public void addTalk(string talker, string playerName, string role)
@@ -87,6 +99,7 @@ namespace WereWolf
 
         public void addRole(String playerName, String playerRole)
         {
+            playersLeft[playerRole] = playersLeft[playerRole]-1;
             if (beliefsPerPlayer.ContainsKey(playerName))
             {
                 beliefsPerPlayer[playerName].addRole(playerRole);
@@ -118,6 +131,7 @@ namespace WereWolf
             //TODO
             //Update beliefs based on accuses
             List<PlayerNode> accuseSample = new List<PlayerNode>(players.Count);
+            Dictionary<string, int> playersToSample = new Dictionary<string, int>(playersLeft);
 
             //Lets infer first information - Player will not accuse himself
             foreach (string player in players)
@@ -133,33 +147,19 @@ namespace WereWolf
                     Tuple<string,float> roleBelief = playerBelief.getRole();
                     if (percentageSuccess <= roleBelief.Item2)
                     {
-                        accuseSample.Add(new RuleBasedNode(player, roleBelief.Item1, this));
-                        isRoleDecided = true;
+                        if (playersToSample[roleBelief.Item1] > 0)
+                        {
+                            accuseSample.Add(new RuleBasedNode(player, roleBelief.Item1, this));
+                            isRoleDecided = true;
+                            playersToSample[roleBelief.Item1] = playersToSample[roleBelief.Item1] - 1;
+                        }
                     }
                 }
                 if(!isRoleDecided)
                 {
-                    int randomNumber = -1;
-                    if (friends.Count > 0)
-                        randomNumber = rnd.Next(1, 4);
-                    else randomNumber = rnd.Next(4);
-
-                    if (randomNumber == 1)
-                    {
-                        accuseSample.Add(new RuleBasedNode(player , "Villager", this));
-                    }
-                    if (randomNumber == 2)
-                    {
-                        accuseSample.Add(new RuleBasedNode(player, "Seer", this));
-                    }
-                    if (randomNumber == 3)
-                    {
-                        accuseSample.Add(new RuleBasedNode(player, "Doctor", this));
-                    }
-                    if (randomNumber == 0)
-                    {
-                        accuseSample.Add(new RuleBasedNode(player, "Werewolf", this));
-                    }
+                    KeyValuePair<string, int> playersToCreate = playersToSample.Where(x => x.Value>0).ElementAt(0);
+                    accuseSample.Add(new RuleBasedNode(player , playersToCreate.Key, this));
+                    playersToSample[playersToCreate.Key] = playersToSample[playersToCreate.Key] - 1;
                 }
             }
             return accuseSample;
