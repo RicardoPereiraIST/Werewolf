@@ -126,18 +126,22 @@ namespace WereWolf
             }
         }
 
-        public List<PlayerNode> Sample()
+        public List<PlayerNode> Sample(string playerRole)
         {
             //TODO
             //Update beliefs based on accuses
             List<PlayerNode> accuseSample = new List<PlayerNode>(players.Count);
             Dictionary<string, int> playersToSample = new Dictionary<string, int>(playersLeft);
+            List<String> noRolePlayers = new List<string>();
 
             //Lets infer first information - Player will not accuse himself
             foreach (string player in players)
             {
-                bool isRoleDecided = false;
-                if (player.Equals(playerName)) continue;
+                if (player.Equals(playerName))
+                {
+                    playersToSample[playerRole] = playersToSample[playerRole] - 1;
+                    continue;
+                }
 
                 PlayerBelief playerBelief;
 
@@ -150,18 +154,21 @@ namespace WereWolf
                         if (playersToSample[roleBelief.Item1] > 0)
                         {
                             accuseSample.Add(new RuleBasedNode(player, roleBelief.Item1, this));
-                            isRoleDecided = true;
                             playersToSample[roleBelief.Item1] = playersToSample[roleBelief.Item1] - 1;
                         }
+                        else noRolePlayers.Add(player);
                     }
+                    else noRolePlayers.Add(player);
                 }
-                if(!isRoleDecided)
-                {
-                    KeyValuePair<string, int> playersToCreate = playersToSample.Where(x => x.Value>0).ElementAt(0);
-                    accuseSample.Add(new RuleBasedNode(player , playersToCreate.Key, this));
-                    playersToSample[playersToCreate.Key] = playersToSample[playersToCreate.Key] - 1;
-                }
+                else noRolePlayers.Add(player);
             }
+            foreach(string player in noRolePlayers)
+            {
+                KeyValuePair<string, int> playersToCreate = playersToSample.Where(x => x.Value > 0).ElementAt(0);
+                accuseSample.Add(new RuleBasedNode(player, playersToCreate.Key, this));
+                playersToSample[playersToCreate.Key] = playersToSample[playersToCreate.Key] - 1;
+            }
+
             return accuseSample;
         }
 

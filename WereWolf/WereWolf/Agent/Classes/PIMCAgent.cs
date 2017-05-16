@@ -63,7 +63,7 @@ namespace WereWolf
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
-                accuseSample.AddRange(infoSet.Sample());
+                accuseSample.AddRange(infoSet.Sample(player.getCharName()));
 
                 RolloutGame game;
 
@@ -87,7 +87,7 @@ namespace WereWolf
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
-                accuseSample.AddRange(infoSet.Sample());
+                accuseSample.AddRange(infoSet.Sample(player.getCharName()));
 
                 RolloutGame game;
 
@@ -111,7 +111,7 @@ namespace WereWolf
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
-                accuseSample.AddRange(infoSet.Sample());
+                accuseSample.AddRange(infoSet.Sample(player.getCharName()));
 
                 RolloutGame game;
 
@@ -136,7 +136,7 @@ namespace WereWolf
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
-                accuseSample.AddRange(infoSet.Sample());
+                accuseSample.AddRange(infoSet.Sample(player.getCharName()));
 
                 RolloutGame game;
 
@@ -160,7 +160,7 @@ namespace WereWolf
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
-                accuseSample.AddRange(infoSet.Sample());
+                accuseSample.AddRange(infoSet.Sample(player.getCharName()));
 
                 RolloutGame game;
 
