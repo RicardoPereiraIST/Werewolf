@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using WereWolf.Nodes;
+using WereWolf.General;
 
 namespace WereWolf
 {
     public class PIMCAgent : Agent
     {
         private InformationSet infoSet;
-        private const int N = 10;
         private Player player;
         private bool liar;
 
@@ -59,7 +59,7 @@ namespace WereWolf
             //Value of the talks, every one has a 0 value in the beginning.
             Dictionary<String, int> possibleTalks = infoSet.getPossibleTalks();
 
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < Constants.N; i++)
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
@@ -83,7 +83,7 @@ namespace WereWolf
         {
             Dictionary<String, int> possibleAccuses = infoSet.getPossibleAccuses();
 
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < Constants.N; i++)
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
@@ -107,7 +107,7 @@ namespace WereWolf
         {
             Dictionary<String, int> possibleKills = infoSet.getPossibleKills();
 
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < Constants.N; i++)
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
@@ -132,7 +132,7 @@ namespace WereWolf
         {
             Dictionary<String, int> possibleHeals = infoSet.getPossibleHeals();
 
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < Constants.N; i++)
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
@@ -156,7 +156,7 @@ namespace WereWolf
         {
             Dictionary<String, int> possibleQuestions = infoSet.getPossibleQuestions();
 
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < Constants.N; i++)
             {
                 List<PlayerNode> accuseSample = new List<PlayerNode>();
                 accuseSample.Add(new MaxNode(player.getPlayerName(), player.getCharName(), infoSet));
@@ -168,7 +168,7 @@ namespace WereWolf
                 {
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 
-                    game = new RolloutGame(accuseSampleGame, General.GameStates.QUESTION, player.getCharName());
+                    game = new RolloutGame(accuseSampleGame, GameStates.QUESTION, player.getCharName());
                     possibleQuestions[possibleQuestion] += game.sampleGame(possibleQuestion);
                 }
             }

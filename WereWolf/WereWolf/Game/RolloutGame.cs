@@ -4,6 +4,7 @@ using WereWolf.General;
 using System.Linq;
 using System.Text;
 using WereWolf.Nodes;
+using WereWolf.General;
 
 namespace WereWolf
 {
@@ -41,7 +42,9 @@ namespace WereWolf
         public int sampleGame(string command)
         {
             PlayerNode player = players[0];
-            int gameUtility = player.PlayGame(this, Int16.MinValue, Int16.MaxValue, 100, command);
+            int beta = (int)((Constants.WEREWOLF_NUMBER * 5 + Constants.SEER_NUMBER * 4 + Constants.DOCTOR_NUMBER * 3 + Constants.VILLAGER_NUMBER) * 0.75);
+            int alpha = -beta;
+            int gameUtility = player.PlayGame(this, alpha, beta, Constants.DEPTH_LIMIT, command);
             return gameUtility;
         }
 
@@ -70,7 +73,7 @@ namespace WereWolf
                 result += players.Where(p => p.charName.Equals("Doctor") && p.playerDead).Count() * 3;
                 result += players.Where(p => p.charName.Equals("Villager") && p.playerDead).Count();
                 result += players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() * 5;
-                result -= -players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 4;
+                result -= players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 4;
                 result -= players.Where(p => p.charName.Equals("Doctor")   && !p.playerDead).Count() * 3;
                 result -= players.Where(p => p.charName.Equals("Villager") && !p.playerDead).Count();
                 result -= players.Where(p => p.charName.Equals("Werewolf") && p.playerDead).Count() * 5;
@@ -78,12 +81,12 @@ namespace WereWolf
 
             if (!team.Equals("Werewolf"))
             {
-                result = players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 3;
-                result += players.Where(p => p.charName.Equals("Doctor") && !p.playerDead).Count() * 2;
+                result = players.Where(p => p.charName.Equals("Seer") && !p.playerDead).Count() * 4;
+                result += players.Where(p => p.charName.Equals("Doctor") && !p.playerDead).Count() * 3;
                 result += players.Where(p => p.charName.Equals("Villager") && !p.playerDead).Count();
                 result += players.Where(p => p.charName.Equals("Werewolf") && p.playerDead).Count() * 5;
-                result -= players.Where(p => p.charName.Equals("Seer") && p.playerDead).Count() * 3;
-                result -= players.Where(p => p.charName.Equals("Doctor") && p.playerDead).Count() * 2;
+                result -= players.Where(p => p.charName.Equals("Seer") && p.playerDead).Count() * 4;
+                result -= players.Where(p => p.charName.Equals("Doctor") && p.playerDead).Count() * 3;
                 result -= players.Where(p => p.charName.Equals("Villager") && p.playerDead).Count();
                 result -= players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() * 5;
             }

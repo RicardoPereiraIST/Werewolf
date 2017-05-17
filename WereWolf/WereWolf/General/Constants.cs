@@ -12,5 +12,7 @@ namespace WereWolf.General
         public const int SEER_NUMBER = 1;
         public const int DOCTOR_NUMBER = 1;
         public const int VILLAGER_NUMBER = 7;
+        public const int N = 10;
+        public const int DEPTH_LIMIT = 80;
     }
 }

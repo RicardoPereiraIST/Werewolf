@@ -104,6 +104,36 @@ namespace WereWolf
             {
                 beliefsPerPlayer[playerName].addRole(playerRole);
             }
+
+            if (this.playerName == playerName) return;
+
+            List<Dictionary<String, String>> logs = beliefsPerPlayer[playerName].getLog();
+            if(playerRole.Equals("Seer"))
+            {
+                foreach (Dictionary<String, String> log in logs)
+                {
+                    if (log.Keys.ElementAt(0) == this.playerName) continue;
+                    beliefsPerPlayer[log.Keys.ElementAt(0)].setRole(log.Values.ElementAt(0), beliefsPerPlayer[playerName].getTrustRate());
+                }
+            }
+
+            foreach (KeyValuePair<String, PlayerBelief> belief in beliefsPerPlayer)
+            {
+                foreach (Dictionary<String, String> log in belief.Value.getLog())
+                {
+                    if(log.Keys.ElementAt(0) == playerName)
+                    {
+                        if(log.Values.ElementAt(0).Equals(playerRole))
+                        {
+                            belief.Value.addTrustRate(10);
+                        }
+                        else
+                        {
+                            belief.Value.addTrustRate(-20);
+                        }
+                    }
+                }
+            }
         }
 
         public void updateBeliefs()
@@ -148,19 +178,18 @@ namespace WereWolf
                 if (beliefsPerPlayer.TryGetValue(player, out playerBelief))
                 {
                     int percentageSuccess = rnd.Next(100);
-                    Tuple<string,float> roleBelief = playerBelief.getRole();
+                    Tuple<string,int> roleBelief = playerBelief.getRole();
                     if (percentageSuccess <= roleBelief.Item2)
                     {
                         if (playersToSample[roleBelief.Item1] > 0)
                         {
                             accuseSample.Add(new RuleBasedNode(player, roleBelief.Item1, this));
                             playersToSample[roleBelief.Item1] = playersToSample[roleBelief.Item1] - 1;
+                            continue;
                         }
-                        else noRolePlayers.Add(player);
                     }
-                    else noRolePlayers.Add(player);
                 }
-                else noRolePlayers.Add(player);
+                noRolePlayers.Add(player);
             }
             foreach(string player in noRolePlayers)
             {
@@ -192,7 +221,7 @@ namespace WereWolf
             {
                 foreach (KeyValuePair<string, PlayerBelief> playerBelief in beliefsPerPlayer)
                 {
-                    Tuple<string, float> belief = playerBelief.Value.getRole();
+                    Tuple<string, int> belief = playerBelief.Value.getRole();
 
                     if (!players.Contains(playerBelief.Key)) continue;
                     if (belief.Item2 >= 100 && !liar)
