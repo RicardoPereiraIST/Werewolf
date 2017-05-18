@@ -212,7 +212,8 @@ namespace WereWolf
 
         public string questionSample()
         {
-            return players[rnd.Next(players.Count)];
+            List<KeyValuePair<String, PlayerBelief>> playersNotCertain = beliefsPerPlayer.Where(x => !x.Value.isCertainRole()).ToList();
+            return playersNotCertain[rnd.Next(playersNotCertain.Count)].Key;
         }
 
         public Dictionary<String, int> getPossibleTalks()
@@ -227,8 +228,11 @@ namespace WereWolf
                     if (!players.Contains(playerBelief.Key) || friends.Contains(playerBelief.Key)) continue;
                     if (belief.Item2 >= 100 && !liar)
                         possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, belief.Item1), 0);
-                    else if(liar)
+                    else if (liar && belief.Item2 < 100)
+                    {
                         possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, liarTalk()), 0);
+                        break;
+                    }
                 }
             }
 
