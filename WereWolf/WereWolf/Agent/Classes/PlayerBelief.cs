@@ -160,6 +160,7 @@ namespace WereWolf
             }
 
             clampRoles();
+            clampTrust();
         }
 
         public void updateBeliefsByTalk(Dictionary<String, PlayerBelief> beliefsPerPlayer)
@@ -187,9 +188,10 @@ namespace WereWolf
             }
 
             clampRoles();
+            clampTrust();
         }
 
-        private void clampRoles()
+        public void clampRoles()
         {
             Dictionary<String, int> temp = new Dictionary<string, int>(percents);
             foreach (String role in percents.Keys)
@@ -199,7 +201,25 @@ namespace WereWolf
                 if (temp[role] > 100)
                     temp[role] = 100;
             }
-            percents = temp;
+
+            int percentSum = temp.Sum(x => x.Value);
+            if (percentSum > 100)
+            {
+                foreach (String role in temp.Keys)
+                {
+                    percents[role] = (percents[role] / percentSum) * 100;
+                }
+            }
+            else
+                percents = temp;
+        }
+
+        public void clampTrust()
+        {
+            if (trustRate > 100)
+                trustRate = 100;
+            if (trustRate < 0)
+                trustRate = 0;
         }
     }
 }

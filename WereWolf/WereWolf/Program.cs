@@ -53,11 +53,12 @@ namespace WereWolf
             do
             {
                 gameManager.playRound();
-                if (gameManager.isGameOver() && numberOfGames < 20)
+                if (gameManager.isGameOver())
                 {
-                    Console.WriteLine("Will start another game with same players (role belief reset) :" + DateTime.Now);
                     gameManager.ReinitializeGame();
                     numberOfGames++;
+                    if(numberOfGames <= 20)
+                        Console.WriteLine("Will start another game with same players (role belief reset) :" + DateTime.Now);
                 }
             } while (numberOfGames <= 20);
 

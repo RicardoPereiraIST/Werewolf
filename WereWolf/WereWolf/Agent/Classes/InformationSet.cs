@@ -125,7 +125,28 @@ namespace WereWolf
                 foreach (Dictionary<String, String> log in logs)
                 {
                     if (log.Keys.ElementAt(0) == this.playerName) continue;
-                    beliefsPerPlayer[log.Keys.ElementAt(0)].setRole(log.Values.ElementAt(0), beliefsPerPlayer[playerName].getTrustRate());
+                    beliefsPerPlayer[log.Keys.ElementAt(0)].setRole(log.Values.ElementAt(0), 
+                        beliefsPerPlayer[log.Keys.ElementAt(0)].getPercentOfRole(log.Values.ElementAt(0)) + beliefsPerPlayer[playerName].getTrustRate());
+                }
+            }
+
+            if (playerRole.Equals("Werewolf"))
+            {
+                if (accusedPlayers.ContainsKey(playerName))
+                {
+                    List<String> playerNames = accusedPlayers[playerName];
+                    foreach (Dictionary<String, String> log in logs)
+                    {
+                        if (log.Keys.ElementAt(0) == this.playerName) continue;
+                        playerNames.Remove(log.Keys.ElementAt(0));
+                    }
+
+                    foreach (string player in playerNames)
+                    {
+                        if (player == this.playerName) continue;
+                        beliefsPerPlayer[player].setRole("Werewolf", beliefsPerPlayer[player].getPercentOfRole("Werewolf") + 15);
+                        beliefsPerPlayer[player].clampRoles();
+                    }
                 }
             }
 
@@ -141,9 +162,10 @@ namespace WereWolf
                         }
                         else
                         {
-                            belief.Value.addTrustRate(-25);
+                            belief.Value.addTrustRate(-15);
                         }
                     }
+                    belief.Value.clampTrust();
                 }
             }
         }
