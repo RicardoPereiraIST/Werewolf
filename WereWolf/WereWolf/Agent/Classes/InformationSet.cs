@@ -50,6 +50,9 @@ namespace WereWolf
             {
                 accusedPlayers.Add(playerName, new List<string> { accusedName });
             }
+
+            if (playerName == this.playerName) return;
+            beliefsPerPlayer[playerName].updateBeliefsByAccuses(accusedPlayers, beliefsPerPlayer);
         }
 
         public void addSeerAnswer(String playerName, String roleName)
@@ -74,10 +77,12 @@ namespace WereWolf
             {
                 belief.reinitializeRoles();
             }
+
             friends.Clear();
             players.Clear();
             accusedPlayers.Clear();
             playersLeft.Clear();
+            savedPeople.Clear();
 
             playersLeft.Add("Werewolf", Constants.WEREWOLF_NUMBER);
             playersLeft.Add("Seer", Constants.SEER_NUMBER);
@@ -87,14 +92,21 @@ namespace WereWolf
 
         public void addTalk(string talker, string playerName, string role)
         {
-            if(players.Contains(playerName) && players.Contains(talker))
+            if (players.Contains(playerName) && players.Contains(talker))
+            {
                 beliefsPerPlayer[talker].addLog(playerName, role);
+                beliefsPerPlayer[talker].updateBeliefsByTalk(beliefsPerPlayer);
+            }
         }
 
         public void addSave(string playerName)
         {
             if(!savedPeople.Contains(playerName))
                 savedPeople.Add(playerName);
+
+            if (playerName == this.playerName) return;
+
+            beliefsPerPlayer[playerName].setRole("Werewolf", 0);
         }
 
         public void addRole(String playerName, String playerRole)
@@ -129,21 +141,11 @@ namespace WereWolf
                         }
                         else
                         {
-                            belief.Value.addTrustRate(-20);
+                            belief.Value.addTrustRate(-25);
                         }
                     }
                 }
             }
-        }
-
-        public void updateBeliefs()
-        {
-            foreach (String player in beliefsPerPlayer.Keys)
-                if (!player.Equals(playerName))
-                {
-                    beliefsPerPlayer[player].updateBeliefs(players, accusedPlayers, savedPeople, beliefsPerPlayer);
-                }
-            accusedPlayers.Clear();
         }
 
         public void setPlayersList(List<String> p)
@@ -164,18 +166,16 @@ namespace WereWolf
             Dictionary<string, int> playersToSample = new Dictionary<string, int>(playersLeft);
             List<String> noRolePlayers = new List<string>();
 
+            List<KeyValuePair<String,PlayerBelief>> listOrderByBelief = beliefsPerPlayer.OrderByDescending(x => x.Value.getMaxPercentage()).ToList();
+            playersToSample[playerRole] = playersToSample[playerRole] - 1;
+
             //Lets infer first information - Player will not accuse himself
-            foreach (string player in players)
+            foreach (KeyValuePair<String, PlayerBelief> player in listOrderByBelief)
             {
-                if (player.Equals(playerName))
-                {
-                    playersToSample[playerRole] = playersToSample[playerRole] - 1;
-                    continue;
-                }
-
                 PlayerBelief playerBelief;
+                if (!players.Contains(player.Key)) continue;
 
-                if (beliefsPerPlayer.TryGetValue(player, out playerBelief))
+                if (beliefsPerPlayer.TryGetValue(player.Key, out playerBelief))
                 {
                     int percentageSuccess = rnd.Next(100);
                     Tuple<string,int> roleBelief = playerBelief.getRole();
@@ -183,14 +183,15 @@ namespace WereWolf
                     {
                         if (playersToSample[roleBelief.Item1] > 0)
                         {
-                            accuseSample.Add(new RuleBasedNode(player, roleBelief.Item1, this));
+                            accuseSample.Add(new RuleBasedNode(player.Key, roleBelief.Item1, this));
                             playersToSample[roleBelief.Item1] = playersToSample[roleBelief.Item1] - 1;
                             continue;
                         }
                     }
                 }
-                noRolePlayers.Add(player);
+                noRolePlayers.Add(player.Key);
             }
+
             foreach(string player in noRolePlayers)
             {
                 KeyValuePair<string, int> playersToCreate = playersToSample.Where(x => x.Value > 0).ElementAt(0);
@@ -223,11 +224,11 @@ namespace WereWolf
                 {
                     Tuple<string, int> belief = playerBelief.Value.getRole();
 
-                    if (!players.Contains(playerBelief.Key)) continue;
+                    if (!players.Contains(playerBelief.Key) || friends.Contains(playerBelief.Key)) continue;
                     if (belief.Item2 >= 100 && !liar)
                         possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, belief.Item1), 0);
-                    else if(belief.Item2 < 100 && liar)
-                        possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, belief.Item1), 0);
+                    else if(liar)
+                        possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, liarTalk()), 0);
                 }
             }
 
@@ -241,6 +242,24 @@ namespace WereWolf
             Dictionary<String, int> possibleAccuses = players.Select(x => x).Where(x => x != playerName && !friends.Contains(x)).ToDictionary(x => string.Format("accuse {0}", x), x => 0);
             possibleAccuses.Add("pass", 0);
             return possibleAccuses;
+        }
+
+        private string liarTalk()
+        {
+            int randomRole = rnd.Next(4);
+            switch(randomRole)
+            {
+                case 0:
+                    return "Werewolf";
+                case 1:
+                    return "Seer";
+                case 2:
+                    return "Doctor";
+                case 3:
+                    return "Villager";
+                default:
+                    return string.Empty;
+            }
         }
 
         public Dictionary<String, int> getPossibleKills()

@@ -44,11 +44,6 @@ namespace WereWolf
             infoSet.addRole(playerName, playerRole);
         }
 
-        public void updateBeliefs()
-        {
-            infoSet.updateBeliefs();
-        }
-
         public string talkRound()
         {
             //Value of the talks, every one has a 0 value in the beginning.

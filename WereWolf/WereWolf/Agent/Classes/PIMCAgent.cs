@@ -49,11 +49,6 @@ namespace WereWolf
             infoSet.addRole(playerName, playerRole);
         }
 
-        public void updateBeliefs()
-        {
-            infoSet.updateBeliefs();
-        }
-
         public string talkRound()
         {
             //Value of the talks, every one has a 0 value in the beginning.
@@ -66,8 +61,8 @@ namespace WereWolf
                 accuseSample.AddRange(infoSet.Sample(player.getCharName()));
 
                 RolloutGame game;
-
-                foreach (string possibleTalk in infoSet.getPossibleTalks().Keys)
+                List<String> possibleTalksCopy = new List<String>(possibleTalks.Keys);
+                foreach (string possibleTalk in possibleTalksCopy)
                 {
                     List<PlayerNode> accuseSampleGame = accuseSample.Select(x => x.Copy()).ToList();
 

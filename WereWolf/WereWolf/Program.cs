@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WereWolf.General;
 
 namespace WereWolf
 {
@@ -20,7 +18,7 @@ namespace WereWolf
 
             GameManager gameManager = new GameManager();
             Console.WriteLine(gameManager.StartGame(isPlayerPlaying, playerName));
-			Console.WriteLine("Will start game at (N:15, No depth limit) :" + DateTime.Now);
+			Console.WriteLine(string.Format("Will start game at (N:{0}, Depth Limit : {1}), Time : {2}", Constants.N, Constants.DEPTH_LIMIT, DateTime.Now));
 
             if (isPlayerPlaying)
             {
@@ -55,14 +53,15 @@ namespace WereWolf
             do
             {
                 gameManager.playRound();
-                if (gameManager.isGameOver())
+                if (gameManager.isGameOver() && numberOfGames < 20)
                 {
                     Console.WriteLine("Will start another game with same players (role belief reset) :" + DateTime.Now);
                     gameManager.ReinitializeGame();
                     numberOfGames++;
                 }
-            } while (numberOfGames<20);
+            } while (numberOfGames <= 20);
 
+            Console.WriteLine("All games over! Press enter to close.");
             Console.ReadLine();
         }
     }

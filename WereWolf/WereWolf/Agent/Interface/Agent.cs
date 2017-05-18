@@ -34,8 +34,6 @@ namespace WereWolf
 
         void addRole(String playerName, String playerRole);
 
-        void updateBeliefs();
-
         void reinitializeBeliefs();
     }
 }

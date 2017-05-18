@@ -96,11 +96,7 @@ namespace WereWolf
 
         public void applyRoundSummary(string roundSummary)
         {
-            if (isHuman)
-            {
-                Console.WriteLine(roundSummary);
-            }
-            else
+            if(!isHuman)
             {
                 //Agent RoundSummary Interpretation
                 StringReader summaryList = new StringReader(roundSummary);
@@ -136,9 +132,6 @@ namespace WereWolf
                     }
                 }
             }
-            agent.updateBeliefs();
-
-            //Console.WriteLine("-------");
         }
 
         public string playRound(GameStates gameState)

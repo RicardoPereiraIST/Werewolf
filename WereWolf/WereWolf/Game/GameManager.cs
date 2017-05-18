@@ -38,25 +38,25 @@ namespace WereWolf
             {
                 for (int i = 0; i <Constants.WEREWOLF_NUMBER; i++)
                 {
-                    players.Add(new Player("Werewolf", playerNames[i], rand.Next(1)==1));
+                    players.Add(new Player("Werewolf", playerNames[i], rand.Next(2) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < Constants.SEER_NUMBER; i++)
                 {
-                    players.Add(new Player("Seer", playerNames[i], rand.Next(1) == 1));
+                    players.Add(new Player("Seer", playerNames[i], rand.Next(2) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < Constants.DOCTOR_NUMBER; i++)
                 {
-                    players.Add(new Player("Doctor", playerNames[i], rand.Next(1) == 1));
+                    players.Add(new Player("Doctor", playerNames[i], rand.Next(2) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < Constants.VILLAGER_NUMBER; i++)
                 {
-                    players.Add(new Player("Villager", playerNames[i], rand.Next(1) == 1));
+                    players.Add(new Player("Villager", playerNames[i], rand.Next(2) == 1));
                     playerNames.RemoveAt(i);
                 }
 
@@ -167,7 +167,7 @@ namespace WereWolf
         public void playRound()
         {
             StringBuilder roundSummary = new StringBuilder();
-            roundSummary.AppendLine("----------------------");
+            Console.WriteLine("----------------------");
             foreach (Player player in players)
             {
                 if (player.isPlayerDead()) continue;
@@ -175,18 +175,22 @@ namespace WereWolf
 
                 if (!string.IsNullOrEmpty(instructions))
                 {
-                    roundSummary.Append(runInstructions(instructions, player));
+                    string instructionInfo = runInstructions(instructions, player);
+                    roundSummary.Append(instructionInfo);
+                    Console.Write(instructionInfo);
                 }
             }
 
             if(gameState == GameStates.KILL)
             {
-                roundSummary.AppendLine("A player has been chosen to be killed by the werewolfes");
+                Console.WriteLine("A player has been chosen to be killed by the werewolfes");
             }
             
             if(gameState == GameStates.ACCUSE)
             {
-                roundSummary.AppendLine(accuseLogic());
+                string accuseLogicResult = accuseLogic();
+                Console.WriteLine(accuseLogicResult);
+                roundSummary.AppendLine(accuseLogicResult);
                 roundVotes.Clear();
             }
 
@@ -197,30 +201,31 @@ namespace WereWolf
                 //ONLY for testing purposes this shouldnt happen with intelligent AI
                 if (mostVotedPlayer != null)
                 {
-                    roundSummary.AppendLine(string.Format("Player {0} was the choosen one to be killed.", mostVotedPlayer.getPlayerName()));
+                    Console.WriteLine(string.Format("Player {0} was the choosen one to be killed.", mostVotedPlayer.getPlayerName()));
                     if (healedPlayer != mostVotedPlayer.getPlayerName())
                     {
+                        Console.WriteLine("Player {0} is dead forever. His role was {1}", mostVotedPlayer.getPlayerName(), mostVotedPlayer.getCharName());
                         roundSummary.AppendLine(string.Format("Player {0} is dead forever. His role was {1}", mostVotedPlayer.getPlayerName(), mostVotedPlayer.getCharName()));
                     }
                     else
                     {
+                        Console.WriteLine(string.Format("Player {0} is still alive because he was healed.", mostVotedPlayer.getPlayerName()));
                         roundSummary.AppendLine(string.Format("Player {0} is still alive because he was healed.", mostVotedPlayer.getPlayerName()));
                         mostVotedPlayer.healPlayer();
                     }
                 }
                 healedPlayer = string.Empty;
 
-                roundSummary.AppendLine(string.Format("\nRound {0} finished.", round));
+                Console.WriteLine(string.Format("\nRound {0} finished.", round));
                 roundVotes.Clear();
             }
 
-            roundSummary.AppendLine("----------------------");
+            Console.WriteLine("----------------------");
 
             gameState = nextGameState();
             round = gameState == GameStates.TALK ? round + 1 : round;
 
             broadcastRoundSummary(roundSummary.ToString());
-            Console.WriteLine(roundSummary);
             if (isGameOver())
                 Console.WriteLine(string.Format("\nGame is over {0}", gameOverMessage()));
         }
