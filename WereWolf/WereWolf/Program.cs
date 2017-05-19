@@ -6,6 +6,9 @@ namespace WereWolf
 {
     public class Program
     {
+
+        private const int NUMBER_OF_GAMES = 50;
+
         static void Main(string[] args)
         {
             int numberOfGames = 0;
@@ -57,10 +60,10 @@ namespace WereWolf
                 {
                     gameManager.ReinitializeGame();
                     numberOfGames++;
-                    if(numberOfGames <= 20)
+                    if(numberOfGames <= NUMBER_OF_GAMES)
                         Console.WriteLine("Will start another game with same players (role belief reset) :" + DateTime.Now);
                 }
-            } while (numberOfGames <= 20);
+            } while (numberOfGames <= NUMBER_OF_GAMES);
 
             Console.WriteLine("All games over! Press enter to close.");
             Console.ReadLine();

@@ -13,7 +13,6 @@ namespace WereWolf
         private string playerName;
         private bool isHuman;
         private string characterName;
-        private bool basicAgent;
 
         public Player(string name, string playerName, bool isLiar)
         {
@@ -22,7 +21,6 @@ namespace WereWolf
             characterName = name;
             agent = new PIMCAgent(this, isLiar);
 
-            basicAgent = false;
             isHuman = false;
         }
 
