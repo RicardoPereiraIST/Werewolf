@@ -53,6 +53,7 @@
     <Compile Include="Game\RolloutGame.cs" />
     <Compile Include="General\Constants.cs" />
     <Compile Include="General\Enums.cs" />
+    <Compile Include="General\Logger.cs" />
     <Compile Include="Nodes\MaxNode.cs" />
     <Compile Include="Nodes\PlayerNode.cs" />
     <Compile Include="Nodes\RuleBasedNode.cs" />

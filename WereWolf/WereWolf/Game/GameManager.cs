@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using WereWolf.General;
 using System.Text;
-using WereWolf.General;
 
 namespace WereWolf
 {
@@ -15,6 +14,7 @@ namespace WereWolf
         private List<string> playerNames;
 
         private int round;
+        private int victoryRound;
 
         private GameStates gameState;
         Random rand;
@@ -167,6 +167,12 @@ namespace WereWolf
             return allWereWolfsDead || allNonWerewolfsDead;
         }
 
+        public bool werewolfsWon()
+        {
+            bool allWereWolfsDead = players.All(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead() || !p.getCharName().Equals("Werewolf"));
+            return allWereWolfsDead ? false : true;
+        }
+
         private string gameOverMessage()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
@@ -226,18 +232,24 @@ namespace WereWolf
                 }
                 healedPlayer = string.Empty;
 
-                Console.WriteLine(string.Format("\nRound {0} finished.", round));
+                Console.WriteLine(string.Format("\nRound {0} finished.", round++));
                 roundVotes.Clear();
             }
 
             Console.WriteLine("----------------------");
 
             gameState = nextGameState();
-            round = gameState == GameStates.TALK ? round + 1 : round;
+            //round = gameState == GameStates.TALK ? round + 1 : round;
 
             broadcastRoundSummary(roundSummary.ToString());
+
             if (isGameOver())
+            {
                 Console.WriteLine(string.Format("\nGame is over {0}", gameOverMessage()));
+                victoryRound = round;
+                round = 1;
+            }
+                
         }
 
         private string accuseLogic()
@@ -386,5 +398,7 @@ namespace WereWolf
                     return GameStates.TALK;
             }
         }
+
+        public int getRound() { return victoryRound; }
     }
 }
