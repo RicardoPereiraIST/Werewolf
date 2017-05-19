@@ -104,6 +104,7 @@ namespace WereWolf
                     if (play.Contains("----------------------")) continue;
                     if (play.Contains("passes")) continue;
                     if (play.Contains("No player")) continue;
+                    if (play.Contains("Doctor is dead")) continue;
 
                     String[] playList = play.Split(' ');
                     if (playList.Length > 2)
