@@ -24,7 +24,7 @@ namespace WereWolf
             players = new List<Player>();
             round = 1;
             roundVotes = new Dictionary<string, int>();
-            playerNames = new List<String>() { "aaron", "abdul", "abe", "abel", "abraham", "adam", "adan", "adolfo", "adolph", "adrian", "abby", "abigail", "adele", "adrian", "abbott", "acosta", "adams", "adkins", "aguilar" };
+            playerNames = new List<String>() { "nuno", "ana", "bruno", "maria", "manuel", "jose", "alexa", "beto", "carlos", "david", "eder", "fabio", "joaquim", "catarina", "mafalda" ,"rafael", "rosa", "renato", "sofia", "paulo"};
 
             gameState = GameStates.KILL;
             rand = new Random(Guid.NewGuid().GetHashCode());
