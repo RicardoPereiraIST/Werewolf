@@ -58,7 +58,7 @@ namespace WereWolf
             return players[playerNumber];
         }
 
-        private bool werewolfesWin()
+        private bool werewolvesWin()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
             return players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() >= players.Where(p => !p.charName.Equals("Werewolf") && !p.playerDead).Count();
@@ -192,7 +192,7 @@ namespace WereWolf
             //This should never happen, just for testing sake
             if (killedPlayer != null)
             {
-                result = string.Format("A player has been chosen to be killed by the werewolfes");
+                result = string.Format("A player was chosen to be killed by the werewolves");
                 killedPlayer.playerDead = true;
             }
 
@@ -265,7 +265,7 @@ namespace WereWolf
                 //This should never happen, just for testing sake
                 if (killedPlayer != null)
                 {
-                    result = string.Format("A player has been choosed to be healed.\n");
+                    result = string.Format("A player was chosen to be healed.\n");
                     healedPlayer = playerName;
                 }
             }

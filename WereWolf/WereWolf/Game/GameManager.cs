@@ -24,7 +24,19 @@ namespace WereWolf
             players = new List<Player>();
             round = 1;
             roundVotes = new Dictionary<string, int>();
-            playerNames = new List<String>() { "nuno", "ana", "bruno", "maria", "manuel", "jose", "alexa", "beto", "carlos", "david", "eder", "fabio", "joaquim", "catarina", "mafalda" ,"rafael", "rosa", "renato", "sofia", "paulo"};
+            playerNames = new List<string>() {
+                "Alexa", "Ana",
+                "Beto", "Bruno",
+                "Carlos", "Catarina",
+                "David",
+                "Eder",
+                "Fabio",
+                "Joaquim", "Jose",
+                "Mafalda", "Manuel", "Maria",
+                "Nuno",
+                "Paulo",
+                "Rafael", "Renato", "Rosa",
+                "Sofia" };
 
             gameState = GameStates.KILL;
             rand = new Random(Guid.NewGuid().GetHashCode());
@@ -100,7 +112,7 @@ namespace WereWolf
             {
                 throw new Exception("Error on starting game (StartGame function): " + ex.Message);
             }
-            return "Game Setup Sucessfull\n";
+            return "Game Setup Sucessfully\n";
         }
 
 
@@ -204,7 +216,7 @@ namespace WereWolf
 
             if(gameState == GameStates.KILL)
             {
-                Console.WriteLine("A player has been chosen to be killed by the werewolfes");
+                Console.WriteLine("A player was chosen to be killed by the werewolves");
             }
             
             if(gameState == GameStates.ACCUSE)
@@ -214,7 +226,7 @@ namespace WereWolf
                 roundSummary.AppendLine(accuseLogicResult);
                 roundVotes.Clear();
                 Console.WriteLine("----------------------");
-                Console.WriteLine(string.Format("Day has finished. (Round {0})", round++));
+                Console.WriteLine(string.Format("## Day has ended. (Round {0})", round++));
             }
 
             if (gameState == GameStates.QUESTION)
@@ -240,7 +252,7 @@ namespace WereWolf
                 healedPlayer = string.Empty;
 
                 Console.WriteLine("----------------------");
-                Console.WriteLine(string.Format("Night has finished. (Round {0})", round++));
+                Console.WriteLine(string.Format("## Night has ended. (Round {0})", round++));
                 roundVotes.Clear();
             }
 
@@ -250,7 +262,7 @@ namespace WereWolf
             if (isGameOver())
             {
                 Console.WriteLine("----------------------");
-                Console.WriteLine(string.Format("Game is over {0}", gameOverMessage()));
+                Console.WriteLine(string.Format("## Game is over {0}", gameOverMessage()));
                 Console.WriteLine("----------------------");
                 victoryRound = round-1;
                 round = 1;
@@ -358,7 +370,7 @@ namespace WereWolf
                 //This should never happen, just for testing sake
                 if (killedPlayer != null)
                 {
-                    result = string.Format("A player has been choosed to be healed.\n");
+                    result = string.Format("A player was chosen to be healed.\n");
                     healedPlayer = playerName;
                 }
             }
@@ -405,6 +417,6 @@ namespace WereWolf
             }
         }
 
-        public int getRound() { return victoryRound; }
+        public int getVictoryRound() { return victoryRound; }
     }
 }
