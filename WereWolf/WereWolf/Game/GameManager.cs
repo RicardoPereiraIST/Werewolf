@@ -166,8 +166,8 @@ namespace WereWolf
         private string gameOverMessage()
         {
             //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
-            if (players.All(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead() || !p.getCharName().Equals("Werewolf"))) return "Werewolfes lose";
-            else return "Werewolfes win";
+            if (players.All(p => p.getCharName().Equals("Werewolf") && p.isPlayerDead() || !p.getCharName().Equals("Werewolf"))) return "Werewolves lose.";
+            else return "Werewolves win.";
         }
 
         public void playRound()
@@ -176,7 +176,12 @@ namespace WereWolf
             Console.WriteLine("----------------------");
             foreach (Player player in players)
             {
-                if (player.isPlayerDead()) continue;
+                if (player.isPlayerDead())
+                {
+                    if (player.getCharName().Equals("Doctor"))
+                        roundSummary.Append("Doctor is dead. Players cannot be healed anymore\n");
+                    continue;
+                } 
                 string instructions = player.playRound(gameState);
 
                 if (!string.IsNullOrEmpty(instructions))
@@ -198,6 +203,8 @@ namespace WereWolf
                 Console.WriteLine(accuseLogicResult);
                 roundSummary.AppendLine(accuseLogicResult);
                 roundVotes.Clear();
+                Console.WriteLine("----------------------");
+                Console.WriteLine(string.Format("Day has finished. (Round {0})", round++));
             }
 
             if (gameState == GameStates.QUESTION)
@@ -222,21 +229,20 @@ namespace WereWolf
                 }
                 healedPlayer = string.Empty;
 
-                Console.WriteLine(string.Format("\nRound {0} finished.", round++));
+                Console.WriteLine("----------------------");
+                Console.WriteLine(string.Format("Night has finished. (Round {0})", round++));
                 roundVotes.Clear();
             }
 
-            Console.WriteLine("----------------------");
-
             gameState = nextGameState();
-            //round = gameState == GameStates.TALK ? round + 1 : round;
-
             broadcastRoundSummary(roundSummary.ToString());
 
             if (isGameOver())
             {
-                Console.WriteLine(string.Format("\nGame is over {0}", gameOverMessage()));
-                victoryRound = round;
+                Console.WriteLine("----------------------");
+                Console.WriteLine(string.Format("Game is over {0}", gameOverMessage()));
+                Console.WriteLine("----------------------");
+                victoryRound = round-1;
                 round = 1;
             }
                 
