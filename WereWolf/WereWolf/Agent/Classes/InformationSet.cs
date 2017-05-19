@@ -272,10 +272,10 @@ namespace WereWolf
                     if (!players.Contains(playerBelief.Key) || friends.Contains(playerBelief.Key)) continue;
 
                     if (belief.Item2 >= 100 && !liar)
-                        possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, belief.Item1), 0);
+                        possibleTalks.Add(string.Format("talk {0} is a {1}", playerBelief.Key, belief.Item1), 0);
                     else if (liar && belief.Item2 < 100 && rnd.Next(2) == 1)
                     {
-                        possibleTalks.Add(string.Format("talk The player {0} is a {1}", playerBelief.Key, liarTalk()), 0);
+                        possibleTalks.Add(string.Format("talk {0} is a {1}", playerBelief.Key, liarTalk()), 0);
                         break;
                     }
                 }

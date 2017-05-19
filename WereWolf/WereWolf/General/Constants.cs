@@ -13,6 +13,6 @@ namespace WereWolf.General
         public const int DOCTOR_NUMBER = 1;
         public const int VILLAGER_NUMBER = 7;
         public const int N = 5;
-        public const int DEPTH_LIMIT = 100;
+        public const int DEPTH_LIMIT = 80;
     }
 }

@@ -20,7 +20,6 @@ namespace WereWolf
             this.playerName = playerName;
             characterName = name;
             agent = new PIMCAgent(this, isLiar);
-
             isHuman = false;
         }
 
@@ -138,7 +137,7 @@ namespace WereWolf
             StringBuilder instructions = new StringBuilder();
             if (isHuman)
             {
-                instructions.AppendLine(string.Format("Player {0} instructions:",playerName));
+                instructions.AppendLine(string.Format("{0} instructions:",playerName));
 
                 if (character.canHeal() && gameState == GameStates.HEAL)
                 {
@@ -172,7 +171,7 @@ namespace WereWolf
                 {
                     String[] playList = instruction.Split(' ');
                     if (playList.Length == 3)
-                        instruction = "talk The player " + playList[1] + " is a " + playList[2];
+                        instruction = "talk " + playList[1] + " is a " + playList[2];
                     else
                         instruction = "talk I don't know";
                 }
