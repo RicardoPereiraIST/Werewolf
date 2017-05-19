@@ -129,7 +129,7 @@ namespace WereWolf
 
                 if (!accusedByPlayer.Contains(playerBelief.Key) && playerBelief.Value.getRole().Equals("Werewolf"))
                 {
-                    setRole("Werewolf", getPercentOfRole("Werewolf") + 15);
+                    setRole("Werewolf", getPercentOfRole("Werewolf") + 10);
                 }
             }
 
@@ -174,16 +174,17 @@ namespace WereWolf
             {
                 if (beliefsPerPlayer[name].isCertainRole() && !beliefsPerPlayer[name].getRole().Item1.Equals(role))
                 {
-                    trustRate -= 25;
+                    trustRate -= 10;
                 }
                 else if (beliefsPerPlayer[name].isCertainRole() && beliefsPerPlayer[name].getRole().Item1.Equals(role))
                 {
-                    trustRate += 20;
-                    setRole("Seer", getPercentOfRole("Seer") + 25);
+                    trustRate += 10;
+                    setRole("Seer", getPercentOfRole("Seer") + 30);
                 }
                 else if(!beliefsPerPlayer[name].isCertainRole())
                 {
                     beliefsPerPlayer[name].setRole(role, beliefsPerPlayer[name].getPercentOfRole(role) + trustRate);
+                    beliefsPerPlayer[name].clampRoles();
                 }
             }
 
@@ -201,17 +202,7 @@ namespace WereWolf
                 if (temp[role] > 100)
                     temp[role] = 100;
             }
-
-            int percentSum = temp.Sum(x => x.Value);
-            if (percentSum > 100)
-            {
-                foreach (String role in temp.Keys)
-                {
-                    percents[role] = (percents[role] / percentSum) * 100;
-                }
-            }
-            else
-                percents = temp;
+            percents = temp;
         }
 
         public void clampTrust()

@@ -28,10 +28,20 @@ namespace WereWolf
 
             gameState = GameStates.KILL;
             rand = new Random(Guid.NewGuid().GetHashCode());
-            playerNames = playerNames.OrderBy(a => Guid.NewGuid()).ToList();
+            shuffleList(playerNames);
             healedPlayer = string.Empty;
         }
 
+        private void shuffleList<T>(List<T> listToShuffle)
+        {
+            for (int i = listToShuffle.Count; i > 1; i--)
+            {
+                int pos = rand.Next(i);
+                var x = listToShuffle[i - 1];
+                listToShuffle[i - 1] = listToShuffle[pos];
+                listToShuffle[pos] = x;
+            }
+        }
         public string StartGame(bool isPlayerPlaying, string playerName)
         {
             try
@@ -60,9 +70,9 @@ namespace WereWolf
                     playerNames.RemoveAt(i);
                 }
 
-                players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
+                shuffleList(players);
 
-                if(isPlayerPlaying)
+                if (isPlayerPlaying)
                  players[rand.Next(players.Count)].setPlayerAsHuman(playerName);
 
                 List<String> names = new List<String>();
@@ -101,7 +111,7 @@ namespace WereWolf
 
         public void ReinitializeGame()
         {
-            players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
+            shuffleList(players);
 
             for (int i = 0; i < Constants.WEREWOLF_NUMBER; i++)
             {
@@ -123,7 +133,7 @@ namespace WereWolf
                 players[Constants.WEREWOLF_NUMBER + Constants.SEER_NUMBER + Constants.DOCTOR_NUMBER + i].reinitializePlayer("Villager");
             }
 
-            players = players.OrderBy(c => rand.Next()).Select(c => c).ToList();
+            shuffleList(players);
 
             List<String> names = new List<String>();
             List<String> werewolves = new List<String>();
