@@ -48,25 +48,25 @@ namespace WereWolf
             {
                 for (int i = 0; i <Constants.WEREWOLF_NUMBER; i++)
                 {
-                    players.Add(new Player("Werewolf", playerNames[i], rand.Next(2) == 1));
+                    players.Add(new Player("Werewolf", playerNames[i], rand.Next(3) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < Constants.SEER_NUMBER; i++)
                 {
-                    players.Add(new Player("Seer", playerNames[i], rand.Next(2) == 1));
+                    players.Add(new Player("Seer", playerNames[i], rand.Next(3) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < Constants.DOCTOR_NUMBER; i++)
                 {
-                    players.Add(new Player("Doctor", playerNames[i], rand.Next(2) == 1));
+                    players.Add(new Player("Doctor", playerNames[i], rand.Next(3) == 1));
                     playerNames.RemoveAt(i);
                 }
 
                 for (int i = 0; i < Constants.VILLAGER_NUMBER; i++)
                 {
-                    players.Add(new Player("Villager", playerNames[i], rand.Next(2) == 1));
+                    players.Add(new Player("Villager", playerNames[i], rand.Next(3) == 1));
                     playerNames.RemoveAt(i);
                 }
 

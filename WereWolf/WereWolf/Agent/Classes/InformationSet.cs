@@ -13,6 +13,7 @@ namespace WereWolf
         private Dictionary<String, int> playersLeft;
         private List<String> savedPeople;
         private string playerName;
+        private string playerRole;
         private List<string> friends;
         private Dictionary<String, PlayerBelief> beliefsPerPlayer;
         private bool liar;
@@ -20,7 +21,7 @@ namespace WereWolf
         //Dummy agent
         Random rnd;
 
-        public InformationSet(string playerName, bool isLiar)
+        public InformationSet(string playerName, string playerRole, bool isLiar)
         {
             players = new List<string>();
             rnd = new Random(Guid.NewGuid().GetHashCode());
@@ -29,6 +30,7 @@ namespace WereWolf
             beliefsPerPlayer = new Dictionary<string, PlayerBelief>();
             savedPeople = new List<string>();
             this.playerName = playerName;
+            this.playerRole = playerRole;
             playersLeft = new Dictionary<string, int>();
             playersLeft.Add("Werewolf", Constants.WEREWOLF_NUMBER);
             playersLeft.Add("Seer", Constants.SEER_NUMBER);
@@ -96,6 +98,11 @@ namespace WereWolf
             {
                 beliefsPerPlayer[talker].addLog(playerName, role);
                 beliefsPerPlayer[talker].updateBeliefsByTalk(beliefsPerPlayer);
+            }
+            if(playerName == this.playerName && role == playerRole)
+            {
+                beliefsPerPlayer[talker].addTrustRate(10);
+                beliefsPerPlayer[talker].setRole("Seer", beliefsPerPlayer[talker].getPercentOfRole("Seer") + beliefsPerPlayer[talker].getTrustRate());
             }
         }
 

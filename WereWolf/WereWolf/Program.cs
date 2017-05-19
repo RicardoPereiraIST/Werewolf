@@ -28,37 +28,7 @@ namespace WereWolf
             Console.WriteLine(gameManager.StartGame(isPlayerPlaying, playerName));
 			Console.WriteLine(string.Format("Will start game at (N:{0}, Depth Limit : {1}), Time : {2}", Constants.N, Constants.DEPTH_LIMIT, DateTime.Now));
 
-            if (isPlayerPlaying)
-            {
-                List<Player> players = gameManager.getPlayers();
-                bool isPlayerWolf = false;
-                String role = "";
-
-                foreach (Player player in players)
-                {
-                    if (player.getPlayerName().Equals(playerName))
-                    {
-                        role = player.getCharName();
-                        break;
-                    }
-                }
-                
-                if(role.Equals("Werewolf"))
-                    isPlayerWolf = true;
-
-                Console.WriteLine("You are a " + role);
-                Console.WriteLine("\nThe names of the players are:");
-
-                foreach (Player player in players)
-                {
-                    if (isPlayerWolf && player.getCharName().Equals("Werewolf"))
-                        Console.WriteLine(player.getPlayerName() + " - Werewolf");
-                    else
-                        Console.WriteLine(player.getPlayerName());
-                }
-                Console.WriteLine();
-            }
-
+            playerText(isPlayerPlaying, gameManager, playerName);
             do
             {
                 gameManager.playRound();
@@ -74,8 +44,11 @@ namespace WereWolf
 
                     gameManager.ReinitializeGame();
                     numberOfGames++;
-                    if(numberOfGames <= NUMBER_OF_GAMES)
+                    if (numberOfGames <= NUMBER_OF_GAMES)
+                    {
                         Console.WriteLine("Will start another game with same players (role belief reset) :" + DateTime.Now);
+                        playerText(isPlayerPlaying, gameManager, playerName);
+                    }
                 }
             } while (numberOfGames <= NUMBER_OF_GAMES);
 
@@ -84,6 +57,40 @@ namespace WereWolf
 
             Console.WriteLine("All games over! Press enter to close.");
             Console.ReadLine();
+        }
+
+        static void playerText(bool isPlayerPlaying, GameManager gameManager, string playerName)
+        {
+            if (isPlayerPlaying)
+            {
+                List<Player> players = gameManager.getPlayers();
+                bool isPlayerWolf = false;
+                String role = "";
+
+                foreach (Player player in players)
+                {
+                    if (player.getPlayerName().Equals(playerName))
+                    {
+                        role = player.getCharName();
+                        break;
+                    }
+                }
+
+                if (role.Equals("Werewolf"))
+                    isPlayerWolf = true;
+
+                Console.WriteLine("You are a " + role);
+                Console.WriteLine("\nThe names of the players are:");
+
+                foreach (Player player in players)
+                {
+                    if (isPlayerWolf && player.getCharName().Equals("Werewolf"))
+                        Console.WriteLine(player.getPlayerName() + " - Werewolf");
+                    else
+                        Console.WriteLine(player.getPlayerName());
+                }
+                Console.WriteLine();
+            }
         }
     }
 }

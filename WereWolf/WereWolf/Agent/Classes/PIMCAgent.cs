@@ -14,7 +14,7 @@ namespace WereWolf
 
         public PIMCAgent(Player player, bool isLiar)
         {
-            infoSet = new InformationSet(player.getPlayerName(), isLiar);
+            infoSet = new InformationSet(player.getPlayerName(),player.getCharName(), isLiar);
             this.player = player;
             this.liar = isLiar;
         }

@@ -9,9 +9,9 @@ namespace WereWolf
         private InformationSet infoSet;
         private const int N = 10;
 
-        public BasicAgent(string playerName)
+        public BasicAgent(string playerName, string playerRole)
         {
-            infoSet = new InformationSet(playerName, false);
+            infoSet = new InformationSet(playerName, playerRole, false);
         }
 
         public void setPlayersList(List<String> p)
