@@ -4,7 +4,6 @@ using WereWolf.General;
 using System.Linq;
 using System.Text;
 using WereWolf.Nodes;
-using WereWolf.General;
 
 namespace WereWolf
 {

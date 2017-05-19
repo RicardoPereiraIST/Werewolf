@@ -198,12 +198,7 @@ namespace WereWolf
             Console.WriteLine("----------------------");
             foreach (Player player in players)
             {
-                if (player.isPlayerDead())
-                {
-                    if (player.getCharName().Equals("Doctor"))
-                        Console.WriteLine("Doctor is dead. Players cannot be healed anymore");
-                    continue;
-                } 
+                if (player.isPlayerDead()) continue;
                 string instructions = player.playRound(gameState);
 
                 if (!string.IsNullOrEmpty(instructions))
@@ -214,7 +209,16 @@ namespace WereWolf
                 }
             }
 
-            if(gameState == GameStates.KILL)
+            if (gameState == GameStates.HEAL)
+            {
+                foreach (Player player in players)
+                {
+                    if (player.isPlayerDead() && player.getCharName().Equals("Doctor"))
+                        Console.WriteLine("Doctor is dead. Players cannot be healed anymore");
+                }
+            }
+
+            if (gameState == GameStates.KILL)
             {
                 Console.WriteLine("A player was chosen to be killed by the werewolves");
             }
