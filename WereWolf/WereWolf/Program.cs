@@ -8,7 +8,12 @@ namespace WereWolf
     {
         static void Main(string[] args)
         {
+            //LOG
+            Logger.Instance.resetLogID();
+            Logger.Instance.beginLog();
+
             int numberOfGames = 0;
+
             Console.WriteLine("WELCOME TO THE WEREWOLF GAME");
             Console.Write("Is a human playing? (Y/N) : ");
             bool isPlayerPlaying = Console.ReadLine().Equals("Y");
@@ -50,17 +55,29 @@ namespace WereWolf
                 }
                 Console.WriteLine();
             }
+
             do
             {
                 gameManager.playRound();
+
                 if (gameManager.isGameOver())
                 {
+                    //LOG
+                    Logger.Instance.logRound(gameManager.getRound());
+                    if (gameManager.werewolfsWon())
+                        Logger.Instance.logWinner("W");
+                    else
+                        Logger.Instance.logWinner("V");
+
                     gameManager.ReinitializeGame();
                     numberOfGames++;
                     if(numberOfGames <= 20)
                         Console.WriteLine("Will start another game with same players (role belief reset) :" + DateTime.Now);
                 }
             } while (numberOfGames <= 20);
+
+            //LOG
+            Logger.Instance.endLog();
 
             Console.WriteLine("All games over! Press enter to close.");
             Console.ReadLine();
