@@ -17,7 +17,8 @@ namespace WereWolf
 
             int numberOfGames = 0;
 
-            Console.WriteLine("WELCOME TO THE WEREWOLF GAME");
+            Console.WriteLine("## WELCOME TO THE WEREWOLF GAME");
+            Console.WriteLine("----------------------");
             Console.Write("Is a human playing? (Y/N) : ");
             bool isPlayerPlaying = Console.ReadLine().Equals("Y");
 
@@ -26,7 +27,7 @@ namespace WereWolf
 
             GameManager gameManager = new GameManager();
             Console.WriteLine(gameManager.StartGame(isPlayerPlaying, playerName));
-			Console.WriteLine(string.Format("Will start game at (N:{0}, Depth Limit : {1}), Time : {2}", Constants.N, Constants.DEPTH_LIMIT, DateTime.Now));
+            Console.WriteLine(string.Format("## Will start game at (N:{0}, Depth Limit : {1}), Time : {2}", Constants.N, Constants.DEPTH_LIMIT, DateTime.Now));
 
             if (isPlayerPlaying)
             {
@@ -66,7 +67,7 @@ namespace WereWolf
                 if (gameManager.isGameOver())
                 {
                     //LOG
-                    Logger.Instance.logRound(gameManager.getRound());
+                    Logger.Instance.logRound(gameManager.getVictoryRound());
                     if (gameManager.werewolfsWon())
                         Logger.Instance.logWinner("W");
                     else

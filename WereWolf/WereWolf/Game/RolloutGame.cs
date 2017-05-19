@@ -58,12 +58,6 @@ namespace WereWolf
             return players[playerNumber];
         }
 
-        private bool werewolfesWin()
-        {
-            //All players that are werewolfs are dead OR all players that are not werewolfs are dead.
-            return players.Where(p => p.charName.Equals("Werewolf") && !p.playerDead).Count() >= players.Where(p => !p.charName.Equals("Werewolf") && !p.playerDead).Count();
-        }
-
         public int evalGame()
         {
             int result = 0;
@@ -175,7 +169,7 @@ namespace WereWolf
 
             if (accusedPlayer != null)
             {
-                result = string.Format("Player {0} was accused and is now dead", accusedPlayer.playerName);
+                result = string.Format("{0} was accused and is now dead", accusedPlayer.playerName);
                 accusedPlayer.playerDead = true;
             }
 
@@ -192,7 +186,7 @@ namespace WereWolf
             //This should never happen, just for testing sake
             if (killedPlayer != null)
             {
-                result = string.Format("A player has been chosen to be killed by the werewolfes");
+                result = string.Format("A player was chosen to be killed by the werewolves");
                 killedPlayer.playerDead = true;
             }
 
@@ -219,14 +213,14 @@ namespace WereWolf
                     return string.Empty;
 
                 case "talk":
-                    return string.Format("Player {0} says {1}", player.playerName, string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
+                    return string.Format("{0} says {1}", player.playerName, string.Join(" ", instructionList.Where(s => !s.Equals("talk"))));
 
                 case "accuse":
                     VotePlayer(instructionList[1]);
-                    return string.Format("Player {0} accuses {1}", player.playerName, instructionList[1]);
+                    return string.Format("{0} accuses {1}", player.playerName, instructionList[1]);
 
                 default:
-                    return string.Format("Player {0} passes", player.playerName);
+                    return string.Format("{0} passes", player.playerName);
             }
         }
 
