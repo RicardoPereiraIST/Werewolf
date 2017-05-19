@@ -45,9 +45,11 @@ namespace WereWolf
 
                     gameManager.ReinitializeGame();
                     numberOfGames++;
-                    if(numberOfGames <= NUMBER_OF_GAMES)
+                    if (numberOfGames <= NUMBER_OF_GAMES)
+                    {
                         Console.WriteLine("## Starting another game with the same players (role belief reset) :" + DateTime.Now);
-playerText(isPlayerPlaying, gameManager, playerName);
+                        playerText(isPlayerPlaying, gameManager, playerName);
+                    }
                 }
             } while (numberOfGames <= NUMBER_OF_GAMES);
 
@@ -58,7 +60,7 @@ playerText(isPlayerPlaying, gameManager, playerName);
             Console.ReadLine();
         }
 
-static void playerText(bool isPlayerPlaying, GameManager gameManager, string playerName)
+        static void playerText(bool isPlayerPlaying, GameManager gameManager, string playerName)
         {
             if (isPlayerPlaying)
             {

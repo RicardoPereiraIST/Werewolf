@@ -82,6 +82,7 @@ namespace WereWolf
             if (isHuman)
             {
                 Console.WriteLine(character);
+                Console.WriteLine("Press enter to continue...");
                 Console.ReadLine();
             }
             else
