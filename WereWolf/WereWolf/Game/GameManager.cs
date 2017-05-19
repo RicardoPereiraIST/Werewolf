@@ -201,7 +201,7 @@ namespace WereWolf
                 if (player.isPlayerDead())
                 {
                     if (player.getCharName().Equals("Doctor"))
-                        roundSummary.Append("Doctor is dead. Players cannot be healed anymore\n");
+                        Console.WriteLine("Doctor is dead. Players cannot be healed anymore");
                     continue;
                 } 
                 string instructions = player.playRound(gameState);
@@ -227,6 +227,7 @@ namespace WereWolf
                 roundVotes.Clear();
                 Console.WriteLine("----------------------");
                 Console.WriteLine(string.Format("## Day has ended. (Round {0})", round++));
+                Console.WriteLine("----------------------");
             }
 
             if (gameState == GameStates.QUESTION)
@@ -253,6 +254,7 @@ namespace WereWolf
 
                 Console.WriteLine("----------------------");
                 Console.WriteLine(string.Format("## Night has ended. (Round {0})", round++));
+                Console.WriteLine("----------------------");
                 roundVotes.Clear();
             }
 
