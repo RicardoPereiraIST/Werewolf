@@ -18,6 +18,7 @@ namespace WereWolf.General
         private Logger() {
             randGenerator = new Random();
             logID = "";
+            Directory.CreateDirectory(@"..\..\logs");
         }
 
         public static Logger Instance
